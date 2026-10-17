@@ -1,0 +1,2007 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bookfront Author Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Playfair+Display:wght@600&family=Inter:wght@400;500;600&display=swap"
+    />
+    <link rel="stylesheet" href="hark.css" />
+    <link rel="stylesheet" href="hark-hero.css" />
+    <link rel="stylesheet" href="hark-charts.css" />
+    <style>
+      :root {
+        --x-plum: #3b1e4f;
+        --x-plum-2: #52306a;
+        --x-plum-soft: #f1eaf5;
+        --x-gold: #d4a24c;
+        --x-gold-soft: #fbf0dc;
+        --x-gold-ink: #7a5513;
+        --x-cream: #fbf7f0;
+        --x-card: #ffffff;
+        --x-line: #ece5da;
+        --x-line-2: #f3eee6;
+        --x-ink: #241a2b;
+        --x-ink-2: #6b6272;
+        --x-green: #1f7a4d;
+        --x-green-soft: #e4f3ea;
+        --x-red: #b4232c;
+        --x-red-soft: #fbe7e7;
+        --x-amber-soft: #fff4e0;
+        --x-serif: "Fraunces", "Playfair Display", Georgia, serif;
+        --x-ui: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+        --x-side: 252px;
+        --x-shadow: 0 1px 2px rgb(59 30 79 / 0.05), 0 4px 16px rgb(59 30 79 / 0.04);
+      }
+      body.x-app { background: var(--x-cream); color: var(--x-ink); font: 400 14px/1.45 var(--x-ui); }
+      .x-app button { font: inherit; color: inherit; cursor: pointer; }
+      .x-shell { display: grid; grid-template-columns: var(--x-side) 1fr; min-height: 100vh; }
+
+      /* sidebar */
+      .x-side { position: sticky; top: 0; height: 100vh; background: var(--x-plum); color: #efe6f4; display: flex; flex-direction: column; padding: 20px 14px 16px; overflow-y: auto; z-index: 40; }
+      .x-logo { display: flex; align-items: center; padding: 4px 10px 22px; }
+      .x-logo img { height: 34px; width: auto; }
+      .x-navlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+      .x-navbtn { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 40px; padding: 8px 12px; border: 0; border-radius: 10px; background: transparent; color: #d9cbe3 !important; font-weight: 500 !important; text-align: left; transition: background var(--dur-quick) var(--ease-out), color var(--dur-quick); }
+      .x-navbtn svg { width: 18px; height: 18px; flex: none; opacity: 0.85; }
+      .x-navbtn:hover { background: rgb(255 255 255 / 0.07); color: #fff !important; }
+      .x-navbtn[aria-current="page"] { background: #563a69; color: #fff !important; box-shadow: inset 3px 0 0 var(--x-gold); }
+      .x-navbtn[aria-current="page"] svg { color: var(--x-gold); opacity: 1; }
+      .x-navbtn:focus-visible { outline: 2px solid var(--x-gold); outline-offset: 1px; }
+      .x-divider { height: 1px; background: rgb(255 255 255 / 0.12); margin: 14px 8px; }
+      .x-soon { display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 8px 12px; color: #a998b5; font-weight: 500; cursor: default; }
+      .x-soon svg { width: 18px; height: 18px; flex: none; opacity: 0.6; }
+      .x-soonpill { margin-left: auto; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: var(--r-pill); background: #52366a; color: #e6dcee; white-space: nowrap; }
+      .x-sidefoot { margin-top: auto; padding-top: 16px; }
+      .x-author { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 12px; background: #4a2d5e; }
+      .x-author .x-avatar, .x-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--x-gold); color: var(--x-plum); display: grid; place-items: center; font: 600 14px/1 var(--x-serif); flex: none; }
+      .x-author b { display: block; color: #fff; font-weight: 600; font-size: 14px; }
+      .x-author div span { font-size: 12px; color: var(--x-gold); font-weight: 500; }
+      .x-help { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding: 10px 12px; min-height: 40px; color: #d9cbe3; text-decoration: none; border-radius: 10px; font-weight: 500; }
+      .x-help:hover { background: rgb(255 255 255 / 0.07); color: #fff; }
+      .x-help svg { width: 18px; height: 18px; }
+
+      /* mobile bar */
+      .x-mbar { display: none; }
+      .x-scrim { display: none; }
+
+      /* main */
+      .x-main { min-width: 0; padding: 28px 36px 56px; }
+      .x-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+      .x-greet h1 { margin: 0; font: 500 30px/1.15 var(--x-serif); color: var(--x-plum); letter-spacing: -0.01em; }
+      .x-greet p { margin: 6px 0 0; color: var(--x-ink-2); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+      .x-sample { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: var(--r-pill); background: var(--x-gold-soft); color: var(--x-gold-ink); }
+      .x-sample::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--x-gold); }
+      .x-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+      .x-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 8px 14px; border-radius: 10px; border: 1px solid var(--x-line); background: var(--x-card); color: var(--x-ink) !important; font-weight: 500 !important; text-decoration: none; white-space: nowrap; transition: background var(--dur-quick), border-color var(--dur-quick); }
+      .x-btn:hover { background: #fdfbf7; border-color: #ddd3c4; }
+      .x-btn:focus-visible, .x-tab:focus-visible, .x-link:focus-visible, .x-collapse:focus-visible { outline: 2px solid var(--x-plum); outline-offset: 2px; }
+      .x-btn svg { width: 16px; height: 16px; }
+      .x-btn--gold { background: var(--x-gold); border-color: var(--x-gold); color: #2a1538 !important; font-weight: 600 !important; }
+      .x-btn--gold:hover { background: #c99540; border-color: #c99540; }
+      .x-btn--plum { background: var(--x-plum); border-color: var(--x-plum); color: #fff !important; }
+      .x-btn--plum:hover { background: var(--x-plum-2); border-color: var(--x-plum-2); }
+      .x-btn--sm { min-height: 34px; padding: 6px 12px; font-size: 13px; }
+      .x-btn--icon { padding: 8px; width: 40px; }
+      .x-select { position: relative; }
+      .x-select select { appearance: none; min-height: 40px; padding: 8px 36px 8px 36px; border: 1px solid var(--x-line); border-radius: 10px; background: var(--x-card); font: 500 14px var(--x-ui); color: var(--x-ink); cursor: pointer; }
+      .x-select > svg { position: absolute; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none; color: var(--x-ink-2); }
+      .x-select .x-cal { left: 12px; }
+      .x-select .x-caret { right: 12px; }
+
+      .x-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 20px; }
+      .x-card { background: var(--x-card); border: 1px solid var(--x-line); border-radius: 16px; box-shadow: var(--x-shadow); padding: 22px; min-width: 0; }
+      .x-s12 { grid-column: span 12; } .x-s8 { grid-column: span 8; } .x-s7 { grid-column: span 7; } .x-s5 { grid-column: span 5; } .x-s4 { grid-column: span 4; }
+      .x-cardhead { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+      .x-cardhead h2 { margin: 0; font: 500 19px/1.25 var(--x-serif); color: var(--x-plum); }
+      .x-cardhead p { margin: 4px 0 0; color: var(--x-ink-2); font-size: 13px; }
+      .x-link { color: var(--x-plum); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; min-height: 32px; }
+      .x-link:hover { text-decoration: underline; }
+      .x-cardfoot { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--x-line-2); }
+
+      /* setup checklist */
+      .x-setup .x-cardhead { margin-bottom: 0; align-items: center; }
+      .x-progress { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+      .x-bar { flex: 1; height: 8px; border-radius: 8px; background: var(--x-line-2); overflow: hidden; }
+      .x-bar span { display: block; height: 100%; width: 66.6%; background: linear-gradient(90deg, var(--x-plum), var(--x-plum-2)); border-radius: 8px; }
+      .x-progress b { font-size: 13px; color: var(--x-ink-2); font-weight: 500; white-space: nowrap; }
+      .x-collapse { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; min-height: 40px; padding: 6px 10px; border-radius: 10px; color: var(--x-ink-2) !important; font-weight: 500 !important; }
+      .x-collapse:hover { background: var(--x-line-2); }
+      .x-collapse svg { width: 16px; height: 16px; transition: transform var(--dur-quick) var(--ease-out); }
+      .x-collapse[aria-expanded="false"] svg { transform: rotate(-90deg); }
+      .x-tasks { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; }
+      .x-tasks[hidden] { display: none; }
+      .x-task { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; min-height: 54px; }
+      .x-task.is-open { background: var(--x-amber-soft); }
+      .x-tick { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; flex: none; }
+      .x-task.is-done .x-tick { background: var(--x-green-soft); color: var(--x-green); }
+      .x-task.is-done .x-tasklabel { color: var(--x-ink-2); text-decoration: line-through; text-decoration-color: #c8bfb2; }
+      .x-task.is-open .x-tick { border: 2px solid var(--x-gold); }
+      .x-tick svg { width: 14px; height: 14px; }
+      .x-tasklabel { flex: 1; font-weight: 500; }
+      .x-task .x-btn { margin-left: auto; }
+
+      /* stats */
+      .x-stats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; }
+      .x-stat { background: var(--x-card); border: 1px solid var(--x-line); border-radius: 16px; box-shadow: var(--x-shadow); padding: 18px; min-width: 0; }
+      .x-stat__label { display: flex; align-items: center; gap: 6px; color: var(--x-ink-2); font-size: 13px; font-weight: 500; }
+      .x-stat__fig { display: block; margin-top: 8px; font: 500 28px/1.1 var(--x-serif); color: var(--x-ink); letter-spacing: -0.01em; }
+      .x-stat__sub { display: block; margin-top: 6px; font-size: 12px; color: var(--x-ink-2); }
+      .x-up { color: var(--x-green); font-weight: 600; }
+      .x-stat--gold { background: linear-gradient(160deg, #fffaf1, #fff); border-color: #ecd9b4; }
+      .x-tip { position: relative; display: inline-flex; }
+      .x-tip button { border: 0; background: transparent; padding: 0; width: 24px; height: 24px; display: grid; place-items: center; color: var(--x-ink-2) !important; border-radius: 50%; }
+      .x-tip button svg { width: 15px; height: 15px; }
+      .x-tip [role="tooltip"] { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); width: 210px; padding: 9px 11px; border-radius: 10px; background: var(--x-ink); color: #fff; font-size: 12px; line-height: 1.4; font-weight: 400; opacity: 0; visibility: hidden; transition: opacity var(--dur-quick); z-index: 10; pointer-events: none; }
+      .x-tip:hover [role="tooltip"], .x-tip:focus-within [role="tooltip"] { opacity: 1; visibility: visible; }
+
+      /* chart */
+      .x-tabs { display: inline-flex; padding: 3px; background: var(--x-line-2); border-radius: 10px; gap: 2px; }
+      .x-tab { border: 0; background: transparent; min-height: 36px; padding: 6px 14px; border-radius: 8px; color: var(--x-ink-2) !important; font-weight: 500 !important; font-size: 13px !important; }
+      .x-tab[aria-selected="true"] { background: var(--x-card); color: var(--x-plum) !important; box-shadow: 0 1px 3px rgb(59 30 79 / 0.12); font-weight: 600 !important; }
+      .x-charttotal { display: flex; align-items: baseline; gap: 10px; margin: -4px 0 12px; }
+      .x-charttotal b { font: 500 26px/1 var(--x-serif); }
+      .x-charttotal span { color: var(--x-ink-2); font-size: 13px; }
+      .x-chartbox { position: relative; height: 280px; }
+      .x-chartbox .chart { margin: 0; padding: 0; background: none; border: 0; }
+
+      /* book */
+      .x-book { display: grid; grid-template-columns: 132px 1fr; gap: 20px; }
+      .x-cover { width: 132px; border-radius: 6px; box-shadow: 0 10px 24px rgb(59 30 79 / 0.22); aspect-ratio: 2 / 3; object-fit: cover; }
+      .x-book h3 { margin: 0; font: 600 21px/1.2 var(--x-serif); color: var(--x-ink); }
+      .x-book .x-subt { margin: 6px 0 12px; color: var(--x-ink-2); font-size: 13px; }
+      .x-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
+      .x-status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: var(--r-pill); }
+      .x-status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+      .x-status--live, .x-status--paid { background: var(--x-green-soft); color: var(--x-green); }
+      .x-status--deliv { background: var(--x-plum-soft); color: var(--x-plum); }
+      .x-status--ref { background: var(--x-red-soft); color: var(--x-red); }
+      .x-status--draft { background: var(--x-line-2); color: var(--x-ink-2); }
+      .x-status--warn { background: var(--x-amber-soft); color: var(--x-gold-ink); }
+      .x-price { font-weight: 600; }
+      .x-price s { color: var(--x-ink-2); font-weight: 400; margin-left: 4px; }
+      .x-goldtag { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: var(--r-pill); background: var(--x-gold-soft); color: var(--x-gold-ink); }
+      .x-urlrow { display: flex; gap: 8px; align-items: stretch; }
+      .x-url { flex: 1; min-width: 0; display: flex; align-items: center; padding: 8px 12px; border: 1px solid var(--x-line); border-radius: 10px; background: #fdfbf7; font: 400 13px "Geist Mono", ui-monospace, monospace; color: var(--x-ink); overflow-wrap: anywhere; word-break: break-all; }
+      .x-url span { min-width: 0; }
+      .x-navbtn, .x-help, .x-soon, .x-btn, .x-btn--sm, .x-collapse, .x-tab, .x-link, .x-select select { min-height: 44px; }
+      .x-btn--icon { width: 44px; }
+      .x-tip button { width: 44px !important; height: 44px !important; margin: -10px -10px -10px -6px; }
+      .x-copy.is-copied { background: var(--x-green-soft); border-color: #bfe2cd; color: var(--x-green) !important; }
+      .x-btnrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+      .x-share { display: flex; gap: 6px; align-items: center; margin-left: auto; }
+      .x-share small { color: var(--x-ink-2); font-size: 12px; margin-right: 2px; }
+
+      /* strength */
+      .x-score { display: flex; align-items: center; gap: 18px; padding-bottom: 16px; border-bottom: 1px solid var(--x-line-2); }
+      .x-ring { position: relative; width: 96px; height: 96px; flex: none; }
+      .x-ring svg { width: 96px; height: 96px; transform: rotate(-90deg); }
+      .x-ring b { position: absolute; inset: 0; display: grid; place-items: center; font: 600 24px/1 var(--x-serif); color: var(--x-plum); }
+      .x-score p { margin: 0; color: var(--x-ink-2); font-size: 13px; }
+      .x-score strong { display: block; color: var(--x-ink); font-size: 15px; margin-bottom: 4px; }
+      .x-sections { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; }
+      .x-sections li { display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; font-size: 13px; }
+      .x-sections .x-tick { width: 20px; height: 20px; margin-top: 0; }
+      .x-sections .x-tick svg { width: 12px; height: 12px; }
+      .x-sections .is-done .x-tick { background: var(--x-green-soft); color: var(--x-green); }
+      .x-sections .is-miss { grid-column: span 2; background: var(--x-amber-soft); border-radius: 10px; padding: 9px 10px; }
+      .x-sections .is-miss .x-tick { border: 2px solid var(--x-gold); }
+      .x-sections .is-miss b { display: block; font-weight: 600; }
+      .x-sections .is-miss span span { color: var(--x-gold-ink); }
+      .x-sections .is-miss .x-btn { margin-left: auto; }
+      .x-tipline { display: flex; gap: 8px; align-items: flex-start; margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: var(--x-plum-soft); color: var(--x-plum); font-size: 13px; font-weight: 500; }
+      .x-tipline svg { width: 16px; height: 16px; flex: none; margin-top: 1px; }
+
+      /* orders */
+      .x-table { width: 100%; border-collapse: collapse; font: 400 13px/1.45 var(--x-ui); }
+      .x-table th { text-align: left; font-weight: 500; color: var(--x-ink-2); font-size: 12px; padding: 0 12px 10px; border-bottom: 1px solid var(--x-line); white-space: nowrap; }
+      .x-table td { padding: 12px; border-bottom: 1px solid var(--x-line-2); vertical-align: middle; }
+      .x-table tr:last-child td { border-bottom: 0; }
+      .x-table th:first-child, .x-table td:first-child { padding-left: 0; }
+      .x-table th:last-child, .x-table td:last-child { padding-right: 0; text-align: right; }
+      .x-table tbody tr:hover td { background: #fdfbf7; }
+      .x-reader { display: flex; align-items: center; gap: 10px; font-weight: 600; white-space: nowrap; }
+      .x-ini { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 600; background: var(--x-plum-soft); color: var(--x-plum); flex: none; }
+      .x-mute { color: var(--x-ink-2); }
+      .x-mono { font-family: "Geist Mono", ui-monospace, monospace; font-size: 12px; }
+      .x-bookcell { display: flex; align-items: center; gap: 10px; }
+      .x-thumb { width: 26px; height: 39px; object-fit: cover; border-radius: 3px; box-shadow: 0 2px 6px rgb(59 30 79 / 0.2); flex: none; }
+      .x-amt { font-weight: 600; white-space: nowrap; }
+      .x-amt.is-ref { color: var(--x-ink-2); text-decoration: line-through; }
+
+      /* readers */
+      .x-people { list-style: none; margin: 0; padding: 0; }
+      .x-people li { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--x-line-2); }
+      .x-people li:last-child { border-bottom: 0; }
+      .x-people .x-who { flex: 1; min-width: 0; }
+      .x-people .x-who b { display: block; font-weight: 600; }
+      .x-people .x-who span { font-size: 12px; color: var(--x-ink-2); }
+      .x-bought { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: var(--r-pill); white-space: nowrap; }
+      .x-bought--yes { background: var(--x-green-soft); color: var(--x-green); }
+      .x-bought--no { background: var(--x-line-2); color: var(--x-ink-2); }
+
+      /* emails */
+      .x-seq { list-style: none; margin: 0; padding: 0; position: relative; }
+      .x-seq li { display: grid; grid-template-columns: 56px 1fr auto; gap: 14px; align-items: center; padding: 12px 0; position: relative; }
+      .x-seq li + li { border-top: 1px solid var(--x-line-2); }
+      .x-day { width: 56px; height: 48px; border-radius: 12px; background: var(--x-plum); color: #fff; display: grid; place-items: center; text-align: center; line-height: 1.05; }
+      .x-day small { display: block; font-size: 12px; color: #d9cbe3; font-weight: 500; }
+      .x-day b { font: 600 18px/1 var(--x-serif); }
+      .x-subj { font-weight: 600; }
+      .x-subj + div { display: flex; gap: 8px; align-items: center; margin-top: 4px; flex-wrap: wrap; }
+      .x-rate { text-align: right; }
+      .x-rate b { display: block; font: 500 20px/1 var(--x-serif); }
+      .x-rate span { font-size: 12px; color: var(--x-ink-2); }
+      .x-note { display: flex; gap: 8px; align-items: center; color: var(--x-ink-2); font-size: 13px; margin: 0; }
+      .x-note svg { width: 16px; height: 16px; color: var(--x-green); flex: none; }
+
+      /* payouts */
+      .x-warn { border-radius: 12px; background: var(--x-amber-soft); border: 1px solid #f0dcb5; padding: 16px; }
+      .x-warn h3 { margin: 0 0 6px; display: flex; gap: 8px; align-items: center; font-size: 15px; font-weight: 600; color: var(--x-gold-ink); }
+      .x-warn h3 svg { width: 18px; height: 18px; }
+      .x-warn p { margin: 0 0 14px; color: var(--x-ink); }
+      .x-held { display: flex; justify-content: space-between; align-items: baseline; margin: 18px 0 4px; }
+      .x-held b { font: 500 28px/1 var(--x-serif); }
+      .x-preview { margin-top: 16px; padding: 12px 14px; border: 1px dashed #d8cdbd; border-radius: 12px; display: flex; justify-content: space-between; gap: 10px; align-items: center; color: var(--x-ink-2); font-size: 13px; flex-wrap: wrap; }
+      .x-preview b { color: var(--x-ink); }
+
+      /* books list */
+      .x-navbtn { text-decoration: none; }
+      .x-books { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+      .x-brow { display: grid; grid-template-columns: 60px 1fr; gap: 14px; padding: 14px; border: 1px solid var(--x-line-2); border-radius: 12px; }
+      .x-bcover { width: 60px; aspect-ratio: 2 / 3; border-radius: 4px; object-fit: cover; box-shadow: 0 4px 12px rgb(59 30 79 / 0.2); }
+      .x-pcover { display: grid; place-items: center; padding: 4px; background: #f6eedf; border: 1px solid #e6d9c2; text-align: center; font: 600 12px/1.1 var(--x-serif); color: var(--x-plum); box-sizing: border-box; overflow-wrap: anywhere; }
+      .x-tip.is-open [role="tooltip"] { opacity: 1; visibility: visible; }
+      .x-btop { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      .x-btop h3 { margin: 0; font: 600 16px/1.25 var(--x-serif); color: var(--x-ink); }
+      .x-bmeta { margin: 4px 0 10px; display: flex; gap: 8px 14px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--x-ink-2); }
+      .x-bmeta b { color: var(--x-ink); font-weight: 600; }
+      .x-brow .x-url { font-size: 12px; padding: 6px 10px; }
+      .x-brow .x-btnrow { margin-top: 8px; }
+      .x-addtile { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 56px; border: 1.5px dashed #d8cdbd; border-radius: 12px; color: var(--x-plum); font-weight: 600; text-decoration: none; }
+      .x-addtile:hover { background: #fdfbf7; border-color: var(--x-gold); }
+      .x-addtile:focus-visible { outline: 2px solid var(--x-plum); outline-offset: 2px; }
+      .x-tabs--sm .x-tab { padding: 6px 10px; font-size: 12px !important; }
+      .x-sections[hidden] { display: none; }
+      @media (max-width: 640px) {
+        .x-brow { grid-template-columns: 48px 1fr; }
+        .x-bcover { width: 48px; }
+        .x-bbody > .x-urlrow, .x-bbody > .x-btnrow { margin-left: -62px; }
+      }
+
+      /* placeholder */
+      .x-placeholder { min-height: 60vh; display: grid; place-items: center; text-align: center; }
+      .x-placeholder[hidden], .x-tasks[hidden] { display: none; }
+      .x-placeholder > div { max-width: 420px; }
+      .x-placeholder .x-phicon { width: 64px; height: 64px; margin: 0 auto 18px; border-radius: 18px; background: var(--x-plum-soft); color: var(--x-plum); display: grid; place-items: center; }
+      .x-placeholder .x-phicon svg { width: 28px; height: 28px; }
+      .x-placeholder h2 { margin: 0 0 8px; font: 500 26px/1.2 var(--x-serif); color: var(--x-plum); }
+      .x-placeholder p { color: var(--x-ink-2); margin: 0 0 20px; }
+
+      .x-toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); background: var(--x-ink); color: #fff; padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: 500; opacity: 0; pointer-events: none; transition: opacity var(--dur-quick), transform var(--dur-quick) var(--ease-out); z-index: 100; }
+      .x-toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+
+      @media (max-width: 1279px) {
+        .x-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .x-s8, .x-s7, .x-s5, .x-s4 { grid-column: span 12; }
+        .x-split { grid-column: span 6 !important; }
+        .x-main { padding: 24px 28px 48px; }
+      }
+      @media (max-width: 1100px) {
+        :root { --x-side: 224px; }
+      }
+      @media (max-width: 860px) {
+        .x-shell { grid-template-columns: 1fr; }
+        .x-mbar { display: flex; position: sticky; top: 0; z-index: 30; align-items: center; justify-content: space-between; height: 60px; padding: 0 12px 0 16px; background: var(--x-plum); }
+        .x-mbar img { height: 28px; width: auto; }
+        .x-burger { width: 44px; height: 44px; border: 0; border-radius: 10px; background: rgb(255 255 255 / 0.08); color: #fff !important; display: grid; place-items: center; }
+        .x-burger svg { width: 22px; height: 22px; }
+        .x-side { position: fixed; left: 0; top: 0; bottom: 0; width: 280px; transform: translateX(-100%); transition: transform 240ms var(--ease-out); box-shadow: 0 0 40px rgb(0 0 0 / 0.25); }
+        .x-app.is-menu .x-side { transform: none; }
+        .x-scrim { display: block; position: fixed; inset: 0; background: rgb(36 26 43 / 0.45); opacity: 0; pointer-events: none; transition: opacity 240ms; z-index: 35; }
+        .x-app.is-menu .x-scrim { opacity: 1; pointer-events: auto; }
+        .x-side .x-logo { justify-content: space-between; }
+        .x-split { grid-column: span 12 !important; }
+      }
+      .x-close { display: none; }
+      @media (max-width: 860px) { .x-close { display: grid; width: 44px; height: 44px; border: 0; border-radius: 10px; background: rgb(255 255 255 / 0.08); color: #fff !important; place-items: center; } .x-close svg { width: 20px; height: 20px; } }
+      @media (max-width: 640px) {
+        .x-main { padding: 18px 16px 40px; }
+        .x-greet h1 { font-size: 25px; }
+        .x-top { margin-bottom: 18px; }
+        .x-actions { width: 100%; }
+        .x-actions .x-select { flex: 1 1 100%; }
+        .x-actions .x-select select { width: 100%; }
+        .x-actions .x-btn { flex: 1; }
+        .x-grid { gap: 14px; }
+        .x-card { padding: 18px 16px; border-radius: 14px; }
+        .x-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .x-stat { padding: 14px; border-radius: 14px; }
+        .x-stat__fig { font-size: 24px; }
+        .x-tasks { grid-template-columns: 1fr; }
+        .x-task { flex-wrap: wrap; }
+        .x-task.is-open .x-btn { width: 100%; margin-left: 36px; width: calc(100% - 36px); }
+        .x-tabs { width: 100%; } .x-tab { flex: 1; }
+        .x-chartbox { height: 220px; }
+        .x-book { grid-template-columns: 88px 1fr; gap: 14px; }
+        .x-cover { width: 88px; }
+        .x-book h3 { font-size: 18px; }
+        .x-bookmain { grid-column: span 2; }
+        .x-share { margin-left: 0; width: 100%; }
+        .x-sections { grid-template-columns: 1fr; }
+        .x-sections .is-miss { grid-column: auto; flex-wrap: wrap; }
+        .x-score { gap: 14px; }
+        .x-table thead { display: none; }
+        .x-table, .x-table tbody, .x-table tr, .x-table td { display: block; }
+        .x-table tr { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding: 12px 0; border-bottom: 1px solid var(--x-line-2); }
+        .x-table tr:last-child { border-bottom: 0; }
+        .x-table td { padding: 0 !important; border: 0; text-align: left !important; }
+        .x-table tbody tr:hover td { background: none; }
+        .x-table .x-c-reader { grid-column: 1; }
+        .x-table .x-c-amt { grid-column: 2; grid-row: 1; text-align: right !important; align-self: center; }
+        .x-table .x-c-email { grid-column: 1; padding-left: 42px !important; }
+        .x-table .x-c-status { grid-column: 2; grid-row: 2; text-align: right !important; }
+        .x-table .x-c-format { display: none; }
+        .x-table .x-c-book { grid-column: 1 / -1; padding-left: 42px !important; font-size: 12px; }
+        .x-table .x-c-book .x-thumb { display: none; }
+        .x-table .x-c-time { grid-column: 1 / -1; padding-left: 42px !important; font-size: 12px; }
+        .x-seq li { grid-template-columns: 48px 1fr; }
+        .x-day { width: 48px; height: 44px; }
+        .x-rate { grid-column: 2; text-align: left; display: flex; gap: 6px; align-items: baseline; }
+        .x-rate b { display: inline; font-size: 16px; }
+      }
+
+      /* add book wizard */
+      .x-wz [hidden] { display: none !important; }
+      .x-wz .x-cardhead p { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+      .x-wz-steps { list-style: none; margin: 4px 0 22px; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+      .x-wz-steps button { width: 100%; min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 4px; border: 0; border-radius: 12px; background: transparent; color: var(--x-ink-2) !important; font-weight: 500 !important; font-size: 12px !important; line-height: 1.2; text-align: center; transition: background var(--dur-quick); }
+      .x-wz-steps button:hover { background: var(--x-line-2); }
+      .x-wz-steps button:focus-visible, .x-wz-chip:focus-visible, .x-wz summary:focus-visible { outline: 2px solid var(--x-plum); outline-offset: 2px; }
+      .x-wz-steps b { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid var(--x-line); background: var(--x-card); font-size: 12px; font-weight: 600; }
+      .x-wz-steps .is-done b { background: var(--x-green-soft); border-color: var(--x-green-soft); color: var(--x-green); }
+      .x-wz-steps [aria-current="step"] { background: var(--x-plum-soft); color: var(--x-plum) !important; font-weight: 600 !important; }
+      .x-wz-steps [aria-current="step"] b { background: var(--x-plum); border-color: var(--x-plum); color: #fff; }
+      .x-wz-count { display: none; }
+      .x-wz-panel h3 { margin: 0 0 10px; font: 500 22px/1.2 var(--x-serif); color: var(--x-plum); }
+      .x-wz .x-tipline { margin: 0 0 20px; }
+      .x-wz-form, .x-wz-stack { display: grid; gap: 14px 18px; }
+      .x-wz-form { grid-template-columns: 1fr 1fr; }
+      .x-wz-full { grid-column: 1 / -1; }
+      .x-wz-field { display: grid; gap: 6px; align-content: start; font-size: 13px; font-weight: 500; min-width: 0; }
+      .x-wz-field small, .x-wz-small, .x-wz legend small { color: var(--x-ink-2); font-weight: 400; font-size: 12px; }
+      .x-wz input[type="text"], .x-wz input[type="number"], .x-wz input[type="date"], .x-wz textarea, .x-wz select { width: 100%; box-sizing: border-box; min-height: 44px; padding: 10px 12px; border: 1px solid var(--x-line); border-radius: 10px; background: var(--x-card); font: 400 14px/1.4 var(--x-ui); color: var(--x-ink); }
+      .x-wz textarea { resize: vertical; }
+      .x-wz input:focus-visible, .x-wz textarea:focus-visible, .x-wz select:focus-visible { outline: 2px solid var(--x-plum); outline-offset: 1px; border-color: var(--x-plum); }
+      .x-wz-money { position: relative; display: block; }
+      .x-wz-money > i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-style: normal; color: var(--x-ink-2); }
+      .x-wz .x-wz-money input { padding-left: 26px; }
+      .x-wz fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+      .x-wz legend { padding: 0; margin-bottom: 8px; font-size: 13px; font-weight: 500; }
+      .x-wz-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+      .x-wz-chip { min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: var(--r-pill); border: 1px solid var(--x-line); background: var(--x-card); font-weight: 500 !important; }
+      .x-wz-chip[aria-pressed="true"] { background: var(--x-plum); border-color: var(--x-plum); color: #fff !important; }
+      .x-wz-chip:disabled { background: var(--x-line-2); color: var(--x-ink-2) !important; cursor: not-allowed; }
+      .x-wz-drop { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; padding: 20px; border: 1.5px dashed #d8cdbd; border-radius: 12px; background: #fdfbf7; }
+      .x-wz-drop p { margin: 4px 0 0; }
+      .x-wz-file { display: flex; align-items: center; gap: 12px; margin-top: 14px; padding: 12px 14px; border: 1px solid var(--x-line); border-radius: 12px; flex-wrap: wrap; }
+      .x-wz-file > span:nth-child(2) { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+      .x-wz-ficon { width: 40px; height: 40px; border-radius: 10px; background: var(--x-plum-soft); color: var(--x-plum); display: grid; place-items: center; flex: none; }
+      .x-wz-ficon svg { width: 20px; height: 20px; }
+      .x-wz-profit { margin-top: 18px; padding: 4px 16px; border: 1px solid var(--x-line); border-radius: 12px; background: #fdfbf7; }
+      .x-wz-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--x-line-2); }
+      .x-wz-row:last-child { border-bottom: 0; }
+      .x-wz-total b { font: 500 22px/1 var(--x-serif); color: var(--x-green); }
+      .x-wz-secs { display: grid; gap: 8px; margin-top: 14px; }
+      .x-wz-sec { border: 1px solid var(--x-line); border-radius: 12px; background: var(--x-card); }
+      .x-wz-sec summary { list-style: none; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 6px 14px; cursor: pointer; font-weight: 600; border-radius: 12px; }
+      .x-wz-sec summary::-webkit-details-marker { display: none; }
+      .x-wz-sec summary small { margin-left: auto; color: var(--x-ink-2); font-weight: 400; font-size: 12px; text-align: right; }
+      .x-wz-sec summary svg { width: 16px; height: 16px; flex: none; color: var(--x-ink-2); transition: transform var(--dur-quick) var(--ease-out); }
+      .x-wz-sec[open] summary svg { transform: rotate(180deg); }
+      .x-wz-sec > div { display: grid; gap: 12px; padding: 2px 14px 16px; }
+      .x-wz-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--x-gold); flex: none; box-sizing: border-box; }
+      .x-wz-sec.is-filled .x-wz-dot { background: var(--x-green); border-color: var(--x-green); }
+      .x-wz-check { display: flex; align-items: center; gap: 10px; min-height: 44px; font-weight: 500; flex-wrap: wrap; }
+      .x-wz-check input { width: 20px; height: 20px; accent-color: var(--x-plum); margin: 0; }
+      .x-wz-toggle { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 16px; border: 1px solid var(--x-line); border-radius: 12px; cursor: pointer; }
+      .x-wz-toggle b { display: block; font-weight: 600; }
+      .x-wz-toggle small { color: var(--x-ink-2); font-size: 12px; }
+      .x-wz-sw { appearance: none; -webkit-appearance: none; width: 46px; height: 28px; border-radius: 14px; background: #d8cdbd; position: relative; flex: none; margin: 0; cursor: pointer; transition: background var(--dur-quick); }
+      .x-wz-sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgb(0 0 0 / 0.2); transition: transform var(--dur-quick) var(--ease-out); }
+      .x-wz-sw:checked { background: var(--x-plum); }
+      .x-wz-sw:checked::after { transform: translateX(18px); }
+      .x-wz-sw:focus-visible { outline: 2px solid var(--x-plum); outline-offset: 2px; }
+      .x-wz-gift { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: start; margin-top: 14px; }
+      .x-wz-swatches { display: flex; gap: 14px; flex-wrap: wrap; }
+      .x-wz-swatch { display: grid; justify-items: center; gap: 4px; font-size: 12px; color: var(--x-ink-2); cursor: pointer; }
+      .x-wz-swatch input[type="radio"] { position: absolute; opacity: 0; width: 1px; height: 1px; }
+      .x-wz-swatch span, .x-wz-swatch input[type="color"] { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgb(0 0 0 / 0.12); box-sizing: border-box; }
+      .x-wz-swatch input[type="color"] { padding: 0; background: none; cursor: pointer; }
+      .x-wz-swatch input:checked + span, .x-wz-swatch input.is-on { box-shadow: 0 0 0 2px var(--x-card), 0 0 0 4px var(--x-plum); }
+      .x-wz-swatch input:focus-visible + span, .x-wz-swatch input[type="color"]:focus-visible { outline: 2px solid var(--x-plum); outline-offset: 4px; }
+      .x-wz-slug { display: flex; align-items: stretch; border: 1px solid var(--x-line); border-radius: 10px; background: #fdfbf7; overflow: hidden; }
+      .x-wz-slug > span { display: flex; align-items: center; padding: 0 0 0 12px; font: 400 13px "Geist Mono", ui-monospace, monospace; color: var(--x-ink-2); white-space: nowrap; }
+      .x-wz .x-wz-slug input { border: 0; border-radius: 0; background: transparent; padding-left: 2px; font: 400 13px "Geist Mono", ui-monospace, monospace; min-width: 0; }
+      .x-wz-slugrow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+      .x-wz-prevhead { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+      .x-wz-prev { width: 100%; max-width: 560px; margin: 0 auto 20px; border: 1px solid var(--x-line); border-radius: 14px; overflow: hidden; background: var(--x-card); box-shadow: var(--x-shadow); transition: max-width 240ms var(--ease-out); }
+      .x-wz-prev.is-mobile { max-width: 300px; }
+      .x-wz-prevbar { height: 8px; background: var(--w-acc, #b3121f); }
+      .x-wz-prevbody { display: grid; grid-template-columns: 96px 1fr; gap: 18px; padding: 20px; align-items: center; }
+      .x-wz-prev.is-mobile .x-wz-prevbody { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+      .x-wz-prevbody img { width: 96px; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 4px; box-shadow: 0 6px 16px rgb(59 30 79 / 0.22); }
+      .x-wz-prevbody p { margin: 0 0 6px; }
+      .x-wz-ptitle { font: 600 20px/1.2 var(--w-font, var(--x-serif)); color: var(--x-ink); overflow-wrap: anywhere; }
+      .x-wz-pbtn { display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: 10px; margin-top: 6px; font-weight: 600; background: var(--w-acc, #b3121f); color: var(--w-acc-ink, #fff); }
+      .x-wz-done { text-align: center; padding: 20px 0 4px; max-width: 520px; margin: 0 auto; }
+      .x-wz-done:focus { outline: none; }
+      .x-wz-done h3 { margin: 0 0 6px; font: 500 26px/1.2 var(--x-serif); color: var(--x-plum); }
+      .x-wz-done p { margin: 0 0 18px; color: var(--x-ink-2); }
+      .x-wz-done .x-btnrow { justify-content: center; }
+      .x-wz-doneicon { width: 60px; height: 60px; margin: 0 auto 14px; border-radius: 50%; background: var(--x-green-soft); color: var(--x-green); display: grid; place-items: center; }
+      .x-wz-doneicon svg { width: 28px; height: 28px; }
+      .x-wz-pubrow { display: flex; justify-content: flex-end; margin-top: 18px; }
+      /* template picker: thumbnails and preview read --t-* vars set from the TPL array */
+      .x-tp-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+      .x-tp { position: relative; cursor: pointer; }
+      .x-tp input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+      .x-tp-card { display: grid; gap: 4px; height: 100%; box-sizing: border-box; padding: 8px 8px 12px; border: 1px solid var(--x-line); border-radius: 12px; background: var(--x-card); transition: border-color var(--dur-quick), box-shadow var(--dur-quick); }
+      .x-tp:hover .x-tp-card { border-color: #cbbcd6; }
+      .x-tp input:checked + .x-tp-card { border-color: var(--x-plum); box-shadow: 0 0 0 1px var(--x-plum); }
+      .x-tp input:focus-visible + .x-tp-card { outline: 2px solid var(--x-plum); outline-offset: 2px; }
+      .x-tp-card > b { margin-top: 6px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+      .x-tp input:checked + .x-tp-card > b::after { content: "✓"; color: var(--x-plum); }
+      .x-tp-card > small { color: var(--x-ink-2); font-size: 12px; line-height: 1.35; }
+      .x-tp-thumb { display: grid; grid-template-columns: 30% 1fr; gap: 8px; align-items: center; align-content: center; aspect-ratio: 4 / 3; padding: 10px; box-sizing: border-box; border-radius: 8px; overflow: hidden; background: var(--t-bg); color: var(--t-fg); border: 1px solid rgb(0 0 0 / 0.06); }
+      .x-tp-cov { aspect-ratio: 2 / 3; border-radius: calc(var(--t-r) / 3); background: var(--t-acc); box-shadow: 0 3px 8px rgb(0 0 0 / 0.18); }
+      .x-tp-copy { display: grid; gap: 4px; min-width: 0; }
+      .x-tp-copy > i { display: block; height: 4px; border-radius: 2px; background: var(--t-mute); opacity: 0.5; }
+      .x-tp-copy > i + i { width: 70%; }
+      .x-tp-h { font: 600 13px/1.1 var(--t-hf); white-space: nowrap; overflow: hidden; }
+      .x-tp-btn { width: 58%; height: 10px; margin-top: 2px; border-radius: var(--t-r); background: var(--t-acc); }
+      .x-tp-mono, .x-tp-strip { display: none; }
+      .x-tp-thumb[data-t="simple"] { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+      .x-tp-thumb[data-t="simple"] .x-tp-cov { width: 22%; }
+      .x-tp-thumb[data-t="simple"] .x-tp-copy { justify-items: center; width: 70%; }
+      .x-tp-thumb[data-t="sleek"] .x-tp-copy { padding: 6px; border-radius: 8px; background: rgb(255 255 255 / 0.7); }
+      .x-tp-thumb[data-t="bold"] .x-tp-h { font-size: 16px; font-weight: 700; }
+      .x-tp-thumb[data-t="bold"] .x-tp-strip { display: flex; grid-column: 1 / -1; gap: 4px; }
+      .x-tp-strip i { flex: 1; height: 10px; background: var(--t-fg); }
+      .x-tp-thumb[data-t="tech"] .x-tp-mono { display: block; font: 400 12px/1 "Geist Mono", ui-monospace, monospace; color: var(--t-acc); }
+      .x-tp-thumb[data-t="luxe"] .x-tp-copy { padding: 5px 0; border-block: 1px solid var(--t-acc); }
+      .x-tp-thumb[data-t="luxe"] .x-tp-h { font-weight: 500; letter-spacing: 0.02em; }
+      .x-wz-prev { background: var(--t-bg, var(--x-card)); }
+      .x-wz-prev .x-wz-ptitle, .x-wz-prev .x-price { color: var(--t-fg, var(--x-ink)); }
+      .x-wz-prev .x-wz-small, .x-wz-prev .x-price s { color: var(--t-mute, var(--x-ink-2)); }
+      .x-wz-pbtn { border-radius: var(--t-r, 10px); }
+      .x-wz-prev[data-t="simple"] .x-wz-prevbody { grid-template-columns: 1fr; justify-items: center; text-align: center; padding: 32px 20px; }
+      .x-wz-prev[data-t="sleek"] .x-wz-prevbody > div { padding: 14px; border-radius: 16px; background: rgb(255 255 255 / 0.7); }
+      .x-wz-prev[data-t="bold"] .x-wz-prevbar { height: 14px; }
+      .x-wz-prev[data-t="bold"] .x-wz-ptitle { font-size: 26px; font-weight: 700; }
+      .x-wz-prev[data-t="tech"] .x-wz-small { font-family: "Geist Mono", ui-monospace, monospace; color: var(--w-acc); }
+      .x-wz-prev[data-t="luxe"] .x-wz-prevbar { height: 1px; margin: 20px 20px 0; }
+      .x-wz-prev[data-t="luxe"] .x-wz-ptitle { font-weight: 500; letter-spacing: 0.02em; }
+      @media (max-width: 640px) { .x-tp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      .x-wz-slug { flex: 1 1 280px; }
+      .x-wz-prevbody .x-pcover { width: 96px; aspect-ratio: 2 / 3; }
+      .x-wz .x-task.is-done .x-tasklabel { text-decoration: none; color: var(--x-ink); }
+      .x-wz .x-tasklabel small { display: block; color: var(--x-ink-2); font-weight: 400; font-size: 12px; overflow-wrap: anywhere; }
+      .x-wz .x-tasks { margin: 0; }
+      .x-wz-foot { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--x-line-2); }
+      .x-wz-foot > div { display: flex; gap: 10px; margin-left: auto; }
+      .x-wz-foot .x-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+      @media (max-width: 760px) {
+        .x-wz-steps { display: none; }
+        .x-wz-count { display: block; margin: 0 0 18px; }
+        .x-wz-count p { display: flex; justify-content: space-between; gap: 10px; margin: 0 0 8px; font-weight: 600; color: var(--x-plum); }
+        .x-wz-count p span { color: var(--x-ink-2); font-weight: 500; }
+      }
+      @media (max-width: 640px) {
+        .x-wz-form, .x-wz-gift { grid-template-columns: 1fr; }
+        .x-wz-drop { gap: 14px; padding: 14px; }
+        .x-wz-slug { flex-wrap: wrap; }
+        .x-wz-slug > span { padding: 8px 12px 0; }
+        .x-wz .x-wz-slug input { padding-left: 12px; }
+        .x-wz-foot .x-btn { flex: 1; }
+        .x-wz-foot > div { width: 100%; }
+        .x-wz-pubrow .x-btn { width: 100%; }
+      }
+
+      /* marketing hub */
+      .x-newpill { margin-left: auto; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: var(--r-pill); background: var(--x-gold); color: #2a1538; }
+      .x-top[hidden], .x-mk [hidden], .x-mk-drawer[hidden], .x-mk-scrim[hidden] { display: none !important; }
+      .x-mk > .x-tabs { margin-bottom: 20px; }
+      .x-mk-filters { display: grid; gap: 16px; }
+      .x-mk-filters fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+      .x-mk-filters legend, .x-mk-lbl { padding: 0; margin-bottom: 8px; font-size: 13px; font-weight: 500; display: block; }
+      .x-mk-in { width: 100%; box-sizing: border-box; min-height: 44px; padding: 10px 12px; border: 1px solid var(--x-line); border-radius: 10px; background: var(--x-card); font: 400 14px/1.45 var(--x-ui); color: var(--x-ink); }
+      textarea.x-mk-in { resize: vertical; }
+      .x-mk-in:focus-visible { outline: 2px solid var(--x-plum); outline-offset: 1px; }
+      .x-mk-filters .x-mk-in { max-width: 240px; }
+      .x-mk .x-tipline { margin: 0 0 20px; align-items: center; flex-wrap: wrap; }
+      .x-mk .x-tipline .x-btn { margin-left: auto; }
+      .x-mk-gold { background: var(--x-gold-soft) !important; color: var(--x-gold-ink) !important; }
+      .x-mk-res { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin: 24px 0 14px; }
+      .x-mk-res h2 { margin: 0; font: 500 19px/1.25 var(--x-serif); color: var(--x-plum); }
+      .x-mk-cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+      .x-mk-cards > li { display: flex; flex-direction: column; gap: 10px; }
+      .x-mk-who { display: flex; align-items: center; gap: 12px; }
+      .x-mk-who b { display: block; font-weight: 600; overflow-wrap: anywhere; }
+      .x-mk-who small { font-size: 12px; color: var(--x-ink-2); }
+      .x-mk-fit { margin-left: auto; text-align: right; flex: none; }
+      .x-mk-fit b { font: 600 18px/1 var(--x-serif); color: var(--x-green); }
+      .x-mk-fit small { display: block; }
+      .x-mk-cards p { margin: 0; font-size: 13px; color: var(--x-ink-2); flex: 1; }
+      .x-mk-cards p b { color: var(--x-ink); font-weight: 600; }
+      .x-mk-cards .x-btn:disabled { background: var(--x-green-soft); border-color: #bfe2cd; color: var(--x-green) !important; cursor: default; }
+      .x-mk-board { display: grid; grid-template-columns: repeat(5, minmax(220px, 1fr)); gap: 14px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x proximity; }
+      .x-mk-col { background: var(--x-line-2); border-radius: 14px; padding: 12px; min-width: 0; scroll-snap-align: start; }
+      .x-mk-col h3 { margin: 0 0 10px; display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; }
+      .x-mk-col h3 span { color: var(--x-ink-2); font-weight: 500; }
+      .x-mk-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+      .x-mk-tile { width: 100%; display: grid; gap: 6px; justify-items: start; text-align: left; padding: 12px; border: 1px solid var(--x-line); border-radius: 12px; background: var(--x-card); box-shadow: var(--x-shadow); }
+      .x-mk-tile:hover { border-color: #cbbcd6; }
+      .x-mk-tile:focus-visible { outline: 2px solid var(--x-plum); outline-offset: 2px; }
+      .x-mk-tile b { font-weight: 600; overflow-wrap: anywhere; }
+      .x-mk-tile small { font-size: 12px; color: var(--x-ink-2); }
+      .x-mk-scrim { position: fixed; inset: 0; background: rgb(36 26 43 / 0.45); z-index: 60; }
+      .x-mk-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(460px, 100vw); box-sizing: border-box; overflow-y: auto; background: var(--x-card); box-shadow: -10px 0 40px rgb(36 26 43 / 0.2); z-index: 70; padding: 22px; display: grid; gap: 16px; align-content: start; }
+      .x-mk-drawer .x-cardhead { margin: 0; flex-wrap: nowrap; }
+      .x-mk-drawer .x-cardhead h2 { overflow-wrap: anywhere; }
+      .x-mk-dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; font-size: 13px; padding: 14px; border-radius: 12px; background: #fdfbf7; border: 1px solid var(--x-line-2); }
+      .x-mk-dl dt { color: var(--x-ink-2); }
+      .x-mk-dl dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+      .x-mk-drawer .x-btnrow { margin: 0; }
+      .x-mk-links td:nth-child(n+3):not(:last-child), .x-mk-links th:nth-child(n+3):not(:last-child) { text-align: right; }
+      .x-mk-links td:first-child { font-weight: 600; }
+      @media (max-width: 640px) {
+        .x-mk .x-tipline .x-btn { margin-left: 0; width: 100%; }
+        .x-mk-filters .x-mk-in { max-width: none; }
+        .x-mk-board { grid-template-columns: repeat(5, 78vw); margin-right: -16px; padding-right: 16px; }
+        .x-mk-drawer { padding: 18px 16px; }
+        .x-mk .x-tab { white-space: normal; line-height: 1.2; padding: 6px 8px; }
+        .x-mk-links tr { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .x-mk-links td:first-child { grid-column: 1 / 4; align-self: center; }
+        .x-mk-links td:last-child { grid-column: 4; grid-row: 1; text-align: right !important; }
+        .x-mk-links td:nth-child(2) { grid-column: 1 / -1; }
+        .x-mk-links td[data-l]::before { content: attr(data-l); display: block; font-size: 12px; color: var(--x-ink-2); font-weight: 400; }
+        .x-mk-links td[data-l] { font-weight: 600; }
+      }
+
+      /* launch kit: crimson/cream graphics drawn in CSS; content rendered from LK_* arrays */
+      .x-lk { --x-crim: #9b1c2c; --x-crim-2: #6e1220; --x-crm: #f7eedf; }
+      .x-lk > .x-tabs { max-width: 100%; overflow-x: auto; }
+      .x-lk .x-tab { white-space: nowrap; }
+      .x-lk .x-greet p .x-status { font-size: 12px; }
+      .x-lk .x-bar span { width: 0; transition: width var(--dur-draw) var(--ease-out); }
+      .x-lk .x-seq li.is-done .x-subj { text-decoration: line-through; text-decoration-color: #c8bfb2; color: var(--x-ink-2); }
+      .x-lk .x-seq li.is-done .x-day { background: var(--x-green); }
+      .x-lk .x-lk-quote { white-space: pre-line; margin: 0; font-size: 13px; color: var(--x-ink); flex: 1; overflow-wrap: anywhere; }
+      .x-lk-ico { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: var(--x-plum-soft); color: var(--x-plum); flex: none; }
+      .x-lk-ico svg { width: 20px; height: 20px; }
+      .x-lk-mail { display: grid; gap: 14px; max-width: 720px; }
+      .x-lk-mail .x-mk-in[readonly] { background: #fdfbf7; }
+      .x-lk-gfx { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+      .x-lk-gfx > li { display: flex; flex-direction: column; gap: 10px; }
+      .x-lk-gfx h3 { margin: 0; font-size: 14px; font-weight: 600; }
+      .x-lk-stage { position: relative; aspect-ratio: 1; border-radius: 12px; background: var(--x-line-2); overflow: hidden; }
+      .x-lk-tile { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); height: calc(100% - 28px); max-width: calc(100% - 28px); aspect-ratio: var(--ar, 1); container-type: size; box-sizing: border-box; border-radius: 8px; overflow: hidden; box-shadow: 0 8px 20px rgb(59 30 79 / 0.18); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 14px 10px; text-align: center; background: var(--x-crim); color: var(--x-crm); font: 500 16px/1.15 var(--x-serif); }
+      .x-lk-tile > span { font-size: clamp(12px, 7cqw, 22px); }
+      .x-lk-tile--story, .x-lk-tile--count { gap: 6px; }
+      .x-lk-tile img { height: 52cqh; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 3px; box-shadow: 0 4px 12px rgb(0 0 0 / 0.3); }
+      .x-lk-tile small { font: 600 12px/1.2 var(--x-ui); letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; }
+      .x-lk-tile--cream { background: var(--x-crm); color: var(--x-crim); }
+      .x-lk-tile--story img { height: 44cqh; }
+      .x-lk-tile--quote { background: linear-gradient(160deg, var(--x-crim), var(--x-crim-2)); font-style: italic; }
+      .x-lk-tile--quote > span { font-size: clamp(13px, 9.5cqw, 26px); }
+      .x-lk-tile--quote img { height: 24cqh; }
+      .x-lk-tile--count img { height: 26cqh; }
+      .x-lk-tile--story img { height: 38cqh; }
+      .x-lk-count { display: flex; gap: 4cqw; }
+      .x-lk-count span { display: grid; min-width: 22cqw; padding: 3cqh 0; border-radius: 6px; background: var(--x-crim); color: var(--x-crm); font: 600 clamp(14px, 11cqw, 30px)/1 var(--x-serif); }
+      .x-lk-count small { font-size: 12px; letter-spacing: 0; text-transform: none; opacity: 0.85; }
+      .x-lk-tile s { opacity: 0.7; font-weight: 400; }
+      .x-lk-slide { container-type: inline-size; aspect-ratio: 16 / 9; max-width: 880px; border-radius: 14px; overflow: hidden; box-shadow: 0 12px 32px rgb(59 30 79 / 0.2); background: linear-gradient(120deg, var(--x-crim-2), var(--x-crim)); color: var(--x-crm); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 4%; padding: 5%; box-sizing: border-box; }
+      .x-lk-slide img { height: 34cqw; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 4px; box-shadow: 0 8px 24px rgb(0 0 0 / 0.35); }
+      .x-lk-slide h3 { margin: 0 0 1.5cqw; font: 500 clamp(16px, 5.4cqw, 46px)/1.08 var(--x-serif); }
+      .x-lk-slide p { margin: 0; font-size: clamp(12px, 1.8cqw, 16px); opacity: 0.9; }
+      .x-lk-slide .x-mono { display: block; margin-top: 2.5cqw; font-size: clamp(12px, 1.6cqw, 14px); overflow-wrap: anywhere; }
+      .x-lk-qr { width: 19cqw; aspect-ratio: 1; box-sizing: border-box; border-radius: 6px; background: #fff; padding: 1.4cqw; display: grid; place-items: center; }
+      .x-lk-qr span { width: 100%; height: 100%; border: 2px dashed #c9b9a3; border-radius: 4px; display: grid; place-items: center; color: var(--x-ink-2); font: 600 12px/1.1 var(--x-ui); text-align: center; }
+      @media (max-width: 1279px) { .x-lk-gfx { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      @media (max-width: 640px) {
+        .x-lk .x-tab { flex: none; }
+        .x-lk .x-seq li > label { grid-column: 2; }
+        .x-lk-gfx { grid-template-columns: 1fr; }
+        .x-lk-slide { grid-template-columns: auto 1fr; padding: 4%; }
+        .x-lk-slide .x-lk-qr { display: none; }
+        .x-lk-slide img { height: 42cqw; }
+      }
+      /* email campaigns + referrals */
+      .x-stats.x-cr-stats { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); margin-bottom: 20px; }
+      .x-cr-scroll { overflow-x: auto; }
+      .x-cr-num { text-align: right; }
+      .x-cr-link { min-width: 180px; overflow-wrap: anywhere; word-break: break-all; }
+      .x-cr-link .x-copy { margin-left: 8px; vertical-align: middle; }
+      .x-cr-comp { margin-top: 20px; }
+      .x-cr-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+      .x-cr-form { display: grid; gap: 16px; min-width: 0; }
+      .x-cr-form fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+      .x-cr-form legend { padding: 0; margin-bottom: 8px; font-size: 13px; font-weight: 500; }
+      .x-cr-tools { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+      .x-cr-tools .x-btn { min-width: 40px; }
+      .x-cr-ed { min-height: 200px; overflow-wrap: anywhere; }
+      .x-cr-ed p, .x-cr-pvbody p { margin: 0 0 10px; }
+      .x-cr-book { display: grid; grid-template-columns: 64px 1fr; gap: 14px; align-items: center; margin: 12px 0; padding: 12px; border: 1px solid var(--x-line); border-radius: 12px; background: var(--x-cream); }
+      .x-cr-book img { width: 64px; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 4px; box-shadow: 0 4px 10px rgb(59 30 79 / 0.18); }
+      .x-cr-book b { display: block; font: 600 15px/1.25 var(--x-serif); color: var(--x-ink); }
+      .x-cr-book .x-price { display: block; margin: 4px 0 8px; font-size: 13px; }
+      .x-cr-pvwrap { min-width: 0; }
+      .x-cr-pv { max-width: 600px; margin: 0 auto; border: 1px solid var(--x-line); border-radius: 14px; overflow: hidden; background: var(--x-card); box-shadow: var(--x-shadow); transition: max-width 240ms var(--ease-out); }
+      .x-cr-pv.is-mobile { max-width: 320px; }
+      .x-cr-pvhead { padding: 14px 18px; border-bottom: 1px solid var(--x-line-2); background: #fdfbf7; font-size: 13px; display: grid; gap: 2px; overflow-wrap: anywhere; }
+      .x-cr-pvhead b { font-size: 14px; }
+      .x-cr-pvbody { padding: 18px; font-size: 14px; overflow-wrap: anywhere; }
+      .x-cr-pv.is-mobile .x-cr-book { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+      .x-cr-pvfoot { padding: 12px 18px; border-top: 1px solid var(--x-line-2); font-size: 12px; color: var(--x-ink-2); text-align: center; }
+      .x-cr-pvfoot u { color: var(--x-plum); }
+      .x-cr-send { display: flex; gap: 10px; flex-wrap: wrap; align-items: end; }
+      .x-cr-send .x-mk-in { width: auto; }
+      .x-cr-sum { margin: 14px 0 0; padding: 12px 14px; border-radius: 12px; background: var(--x-gold-soft); color: var(--x-gold-ink); font-weight: 600; font-size: 13px; }
+      .x-cr-set { display: grid; gap: 16px; }
+      .x-cr-set fieldset { border: 0; margin: 0; padding: 0; }
+      .x-cr-set legend { padding: 0; margin-bottom: 8px; font-size: 13px; font-weight: 500; }
+      .x-cr-phone { max-width: 290px; margin: 0 auto; border: 10px solid var(--x-ink); border-radius: 36px; padding: 26px 18px 22px; background: var(--x-cream); text-align: center; display: grid; gap: 12px; justify-items: center; }
+      .x-cr-phone img { width: 110px; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 4px; box-shadow: 0 8px 18px rgb(59 30 79 / 0.22); }
+      .x-cr-phone h3 { margin: 0; font: 500 19px/1.25 var(--x-serif); color: var(--x-plum); }
+      .x-cr-phone p { margin: 0; font-size: 13px; color: var(--x-ink-2); }
+      .x-cr-phone .x-urlrow { width: 100%; margin: 0; }
+      .x-cr-phone .x-url { font-size: 12px; text-align: left; }
+      .x-cr-phone .x-share { margin: 0; width: auto; justify-content: center; }
+      @media (max-width: 1100px) { .x-cr-cols { grid-template-columns: 1fr; } }
+      @media (max-width: 640px) {
+        .x-cr-tbl tr { grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); }
+        .x-cr-tbl td.x-cr-full { grid-column: 1 / -1; }
+        .x-cr-tbl td[data-l]::before { content: attr(data-l); display: block; font-size: 12px; color: var(--x-ink-2); font-weight: 400; }
+        .x-cr-tbl td[data-l] { font-weight: 600; }
+        .x-cr-link { min-width: 0; }
+        .x-cr-send .x-mk-in, .x-cr-send .x-btn { width: 100%; }
+      }
+    </style>
+  </head>
+  <body class="x-app">
+    <div class="x-shell" id="top">
+      <header class="x-mbar">
+        <img src="bookfront-logo-final.png" alt="Bookfront" />
+        <button class="x-burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="x-side" id="x-burger">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+        </button>
+      </header>
+      <div class="x-scrim" id="x-scrim"></div>
+
+      <aside class="x-side" id="x-side" aria-label="Main menu">
+        <div class="x-logo">
+          <img src="bookfront-logo-final.png" alt="Bookfront" />
+          <button class="x-close" type="button" aria-label="Close menu" id="x-close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+          </button>
+        </div>
+        <nav aria-label="Dashboard sections">
+          <ul class="x-navlist">
+            <li><a class="x-navbtn" href="#/dashboard" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard</a></li>
+            <li><a class="x-navbtn" href="#/books"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5z"/><path d="M4 19a2 2 0 0 1 2-2h13v4H6a2 2 0 0 1-2-2z"/></svg>Books</a></li>
+            <li><a class="x-navbtn" href="#/launch-kit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15l-3-3c1.5-5 5-8 11-9-1 6-4 9.5-9 11z"/><path d="M9 12H5l3-4h4M12 15v4l4-3v-4M6 16c-1.5 1-2 3-2 4 1 0 3-.5 4-2"/></svg>Launch kit</a></li>
+            <li><a class="x-navbtn" href="#/pages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 13h8M8 16h5"/></svg>Sales pages</a></li>
+            <li><a class="x-navbtn" href="#/orders"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 2l-2 4v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6l-2-4z"/><path d="M4 6h16M16 10a4 4 0 0 1-8 0"/></svg>Orders</a></li>
+            <li><a class="x-navbtn" href="#/readers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/></svg>Readers</a></li>
+            <li><a class="x-navbtn" href="#/emails"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Follow-up emails</a></li>
+            <li><a class="x-navbtn" href="#/campaigns"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L10 14M21 3l-7 18-4-7-7-4z"/></svg>Email campaigns<span class="x-newpill">New</span></a></li>
+            <li><a class="x-navbtn" href="#/referrals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 21V7M12 7H8a2.5 2.5 0 1 1 0-5c3 0 4 5 4 5zM12 7h4a2.5 2.5 0 1 0 0-5c-3 0-4 5-4 5z"/></svg>Referrals<span class="x-newpill">New</span></a></li>
+            <li><a class="x-navbtn" href="#/payouts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><circle cx="12" cy="12.5" r="2.5"/><path d="M6 9.5v6M18 9.5v6"/></svg>Payouts</a></li>
+            <li><a class="x-navbtn" href="#/settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Settings</a></li>
+          </ul>
+        </nav>
+        <div class="x-divider" role="separator"></div>
+        <ul class="x-navlist" aria-label="More tools">
+          <li class="x-soon" aria-disabled="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 6c-2-2-5-2.5-9-2v15c4-.5 7 0 9 2 2-2 5-2.5 9-2V4c-4-.5-7 0-9 2z"/><path d="M12 6v15"/></svg>Paperbacks<span class="x-soonpill">Coming soon</span></li>
+          <li><a class="x-navbtn" href="#/marketing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h3l6 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M17 8.5a5 5 0 0 1 0 7"/></svg>Marketing hub<span class="x-newpill">New</span></a></li>
+        </ul>
+        <div class="x-sidefoot">
+          <div class="x-author">
+            <span class="x-avatar" aria-hidden="true">RW</span>
+            <div><b>The Royal Writer</b><span>Founding author</span></div>
+          </div>
+          <a class="x-help" href="#top" data-toast="Help center opens in the next mockup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.4M12 17h.01"/></svg>Help</a>
+        </div>
+      </aside>
+
+      <main class="x-main" id="x-main">
+        <div class="x-top">
+          <div class="x-greet">
+            <h1>Good afternoon, Gabriel</h1>
+            <p><span id="x-viewsub">Here's how your books are doing.</span> <span class="x-sample">Sample data</span></p>
+          </div>
+          <div class="x-actions">
+            <label class="x-select">
+              <svg class="x-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5z"/><path d="M4 19a2 2 0 0 1 2-2h13v4H6a2 2 0 0 1-2-2z"/></svg>
+              <select id="x-bookfilter" aria-label="Filter by book">
+                <option selected>All books</option>
+                <option>He Was My First Love · Live · Ebook $2.99</option>
+                <option>The Peace Check Journal · Draft · Ebook $4.99</option>
+              </select>
+              <svg class="x-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+            </label>
+            <label class="x-select">
+              <svg class="x-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+              <select id="x-range" aria-label="Date range">
+                <option>Last 7 days</option>
+                <option selected>Last 30 days</option>
+                <option>Last 90 days</option>
+                <option>All time</option>
+              </select>
+              <svg class="x-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+            </label>
+            <a class="x-btn" href="#top" data-toast="Your bookshelf (bookfront.app/theroyalwriter) would open in a new tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>View bookshelf</a>
+            <a class="x-btn x-btn--gold" href="#/books/new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add book</a>
+          </div>
+        </div>
+
+        <div id="x-dashboard">
+          <div class="x-grid">
+            <!-- 1. Setup checklist -->
+            <section class="x-card x-s12 x-setup" aria-labelledby="x-setup-h">
+              <div class="x-cardhead">
+                <div>
+                  <h2 id="x-setup-h">Finish setting up your store</h2>
+                  <p>Two steps left before you can get paid.</p>
+                </div>
+                <button class="x-collapse" type="button" aria-expanded="true" aria-controls="x-tasks" id="x-collapse">
+                  <span>Hide steps</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+              </div>
+              <div class="x-progress">
+                <div class="x-bar" role="progressbar" aria-valuemin="0" aria-valuemax="6" aria-valuenow="4" aria-label="Setup progress"><span></span></div>
+                <b>4 of 6 done</b>
+              </div>
+              <ul class="x-tasks" id="x-tasks">
+                <li class="x-task is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span><span class="x-tasklabel">Create your account</span></li>
+                <li class="x-task is-open"><span class="x-tick" aria-hidden="true"></span><span class="x-tasklabel">Connect your bank with Stripe</span><a class="x-btn x-btn--plum x-btn--sm" href="#x-payouts">Connect payouts</a></li>
+                <li class="x-task is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span><span class="x-tasklabel">Add your book</span></li>
+                <li class="x-task is-open"><span class="x-tick" aria-hidden="true"></span><span class="x-tasklabel">Review your 3 follow-up emails</span><a class="x-btn x-btn--sm" href="#x-emails">Review emails</a></li>
+                <li class="x-task is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span><span class="x-tasklabel">Publish your sales page</span></li>
+                <li class="x-task is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span><span class="x-tasklabel">Add your free chapter/gift</span></li>
+              </ul>
+            </section>
+
+            <!-- 2. Stats -->
+            <section class="x-s12" aria-label="Key numbers, last 30 days">
+              <div class="x-stats">
+                <div class="x-stat"><span class="x-stat__label">Sales</span><span class="x-stat__fig">47</span><span class="x-stat__sub"><span class="x-up">+12</span> vs last period</span></div>
+                <div class="x-stat"><span class="x-stat__label">Revenue</span><span class="x-stat__fig">$140.53</span><span class="x-stat__sub">Before fees</span></div>
+                <div class="x-stat x-stat--gold">
+                  <span class="x-stat__label">Your profit
+                    <span class="x-tip"><button type="button" aria-describedby="x-tip-profit" aria-label="About profit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button><span role="tooltip" id="x-tip-profit">After payment processing and Bookfront fees</span></span>
+                  </span>
+                  <span class="x-stat__fig">$118.20</span><span class="x-stat__sub">Yours to keep</span>
+                </div>
+                <div class="x-stat"><span class="x-stat__label">Readers on your list</span><span class="x-stat__fig">312</span><span class="x-stat__sub"><span class="x-up">+86</span> vs last period</span></div>
+                <div class="x-stat"><span class="x-stat__label">Free gift signups</span><span class="x-stat__fig">265</span><span class="x-stat__sub">Heartbreak Journal</span></div>
+                <div class="x-stat"><span class="x-stat__label">Sales page conversion</span><span class="x-stat__fig">3.8%</span><span class="x-stat__sub">Visitors to buyers</span></div>
+              </div>
+            </section>
+
+            <!-- 3. Chart -->
+            <section class="x-card x-s8" aria-labelledby="x-chart-h">
+              <div class="x-cardhead">
+                <div>
+                  <h2 id="x-chart-h">Performance</h2>
+                  <p>Daily, Sep 15 to Oct 14</p>
+                </div>
+                <div class="x-tabs" role="tablist" aria-label="Chart metric">
+                  <button class="x-tab" type="button" role="tab" aria-selected="true" data-metric="sales">Sales</button>
+                  <button class="x-tab" type="button" role="tab" aria-selected="false" data-metric="revenue">Revenue</button>
+                  <button class="x-tab" type="button" role="tab" aria-selected="false" data-metric="signups">Signups</button>
+                </div>
+              </div>
+              <div class="x-charttotal"><b id="x-ctotal">47</b><span id="x-clabel">sales in 30 days</span></div>
+              <div class="x-chartbox"><canvas id="x-chart" role="img" aria-label="Daily sales over the last 30 days, rising toward the end of the period"></canvas></div>
+            </section>
+
+            <!-- 9. Payouts -->
+            <section class="x-card x-s4" id="x-payouts" aria-labelledby="x-pay-h">
+              <div class="x-cardhead">
+                <div><h2 id="x-pay-h">Payouts</h2><p>Paid out by Stripe to your bank</p></div>
+                <span class="x-status x-status--warn">Not connected</span>
+              </div>
+              <div class="x-warn">
+                <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/></svg>Payouts are on hold</h3>
+                <p>Connect your bank to receive payouts. Your earnings ($118.20) are held safely until you connect.</p>
+                <a class="x-btn x-btn--plum" href="#top" data-toast="Stripe onboarding opens in the next mockup">Connect with Stripe</a>
+              </div>
+              <div class="x-held"><span class="x-mute">Held for you</span><b>$118.20</b></div>
+              <div class="x-preview">
+                <span>Once connected</span>
+                <span>Next payout <b>$42.10</b> on <b>Oct 21</b></span>
+              </div>
+            </section>
+
+            <!-- 4. Book -->
+            <section class="x-card x-s7" aria-labelledby="x-book-h">
+              <div class="x-cardhead">
+                <div><h2 id="x-book-h">Your books</h2><p>2 books · 1 live, 1 draft</p></div>
+              </div>
+              <ul class="x-books">
+                <li class="x-brow">
+                  <img class="x-bcover" src="cover-hwmfl.jpg" alt="Cover of He Was My First Love" />
+                  <div class="x-bbody">
+                    <div class="x-btop"><h3>He Was My First Love</h3><span class="x-status x-status--live">Live</span></div>
+                    <div class="x-bmeta"><span class="x-price">Ebook $2.99 <s>$9.99</s></span><span class="x-goldtag">Launch price</span><span><b>47</b> sales</span></div>
+                    <div class="x-urlrow">
+                      <div class="x-url" title="bookfront.app/theroyalwriter/he-was-my-first-love"><span>bookfront.app/theroyalwriter/he-was-my-first-love</span></div>
+                      <button class="x-btn x-btn--sm x-copy" type="button" data-url="bookfront.app/theroyalwriter/he-was-my-first-love"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h9"/></svg><span>Copy</span></button>
+                    </div>
+                    <div class="x-btnrow">
+                      <a class="x-btn x-btn--plum x-btn--sm" href="#top" data-toast="The page editor opens in the next mockup">Edit</a>
+                      <a class="x-btn x-btn--sm" href="#top" data-toast="He Was My First Love's page would open in a new tab">View</a>
+                      <a class="x-link" href="#/launch-kit">Launch kit</a>
+                    </div>
+                  </div>
+                </li>
+                <li class="x-brow">
+                  <div class="x-bcover x-pcover" role="img" aria-label="Placeholder cover for The Peace Check Journal">The Peace Check Journal</div>
+                  <div class="x-bbody">
+                    <div class="x-btop"><h3>The Peace Check Journal</h3><span class="x-status x-status--draft">Draft</span></div>
+                    <div class="x-bmeta"><span class="x-price">Ebook $4.99</span><span><b>0</b> sales</span></div>
+                    <div class="x-urlrow">
+                      <div class="x-url" title="bookfront.app/theroyalwriter/the-peace-check-journal"><span>bookfront.app/theroyalwriter/the-peace-check-journal</span></div>
+                      <button class="x-btn x-btn--sm x-copy" type="button" data-url="bookfront.app/theroyalwriter/the-peace-check-journal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h9"/></svg><span>Copy</span></button>
+                    </div>
+                    <div class="x-btnrow">
+                      <a class="x-btn x-btn--plum x-btn--sm" href="#top" data-toast="The page editor opens in the next mockup">Edit</a>
+                      <a class="x-btn x-btn--sm" href="#top" data-toast="Draft preview opens in the next mockup">View</a>
+                      <a class="x-link" href="#/launch-kit">Launch kit</a>
+                    </div>
+                  </div>
+                </li>
+                <li><a class="x-addtile" href="#/books/new"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add another book</a></li>
+              </ul>
+              <div class="x-cardfoot">
+                <div class="x-btnrow" style="margin-top: 0">
+                    <div class="x-share">
+                      <small>Share your bookshelf</small>
+                      <button class="x-btn x-btn--icon" type="button" aria-label="Share on Facebook" data-toast="Share to Facebook (mockup)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v2H7v4h3v8h4v-8h3l1-4h-4V8z"/></svg></button>
+                      <button class="x-btn x-btn--icon" type="button" aria-label="Share on X" data-toast="Share to X (mockup)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.8 3h3.1l-6.8 7.8L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.3-8.3L2 3h6.4l4.4 5.8zm-1.1 16.2h1.7L7.4 4.7H5.6z"/></svg></button>
+                      <button class="x-btn x-btn--icon" type="button" aria-label="Share by email" data-toast="Share by email (mockup)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></button>
+                    </div>
+                  </div>
+              </div>
+            </section>
+
+            <!-- 5. Strength -->
+            <section class="x-card x-s5" aria-labelledby="x-str-h">
+              <div class="x-cardhead">
+                <div><h2 id="x-str-h">Sales page strength</h2><p>Each section answers a question readers ask before buying.</p></div>
+                <div class="x-tabs x-tabs--sm" role="tablist" aria-label="Book">
+                  <button class="x-tab" type="button" role="tab" aria-selected="true" data-sbook="0">First Love</button>
+                  <button class="x-tab" type="button" role="tab" aria-selected="false" data-sbook="1">Peace Check</button>
+                </div>
+              </div>
+              <div class="x-score">
+                <div class="x-ring" role="img" aria-label="Score 82 percent" id="x-ring">
+                  <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--x-line-2)" stroke-width="10"/><circle cx="50" cy="50" r="42" fill="none" stroke="var(--x-gold)" stroke-width="10" stroke-linecap="round" stroke-dasharray="216.4 263.9"/></svg>
+                  <b>82%</b>
+                </div>
+                <div><strong>Strong, with 3 gaps</strong><p>9 of 12 sections filled. Fill the last three to give readers every reason to buy.</p></div>
+              </div>
+              <ul class="x-sections" hidden data-sbook="1">
+                <li class="is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>Title &amp; subtitle</li>
+                <li class="is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>Key benefits</li>
+                <li class="is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>Book cover</li>
+                <li class="is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>Buy button</li>
+                <li class="is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>About the author</li>
+                <li class="is-miss"><span class="x-tick" aria-hidden="true"></span><span><b>Reviews</b><span>Add a top review and a second one</span></span><a class="x-btn x-btn--sm" href="#top" data-toast="Section editor opens in the next mockup">Add</a></li>
+                <li class="is-miss"><span class="x-tick" aria-hidden="true"></span><span><b>What you'll learn &amp; who it's for</b><span>Tell readers what the journal does</span></span><a class="x-btn x-btn--sm" href="#top" data-toast="Section editor opens in the next mockup">Add</a></li>
+                <li class="is-miss"><span class="x-tick" aria-hidden="true"></span><span><b>Free chapter &amp; look inside</b><span>Add sample pages</span></span><a class="x-btn x-btn--sm" href="#top" data-toast="Section editor opens in the next mockup">Add</a></li>
+                <li class="is-miss"><span class="x-tick" aria-hidden="true"></span><span><b>Guarantee</b><span>Add a money-back promise</span></span><a class="x-btn x-btn--sm" href="#top" data-toast="Section editor opens in the next mockup">Add</a></li>
+              </ul>
+              <ul class="x-sections" data-sbook="0">
+                <li class="is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>Title &amp; subtitle</li>
+                <li class="is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>Key benefits</li>
+                <li class="is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>Book cover</li>
+                <li class="is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>Buy button</li>
+                <li class="is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>Top review</li>
+                <li class="is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>What you'll learn</li>
+                <li class="is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>Who it's for</li>
+                <li class="is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>Free chapter</li>
+                <li class="is-miss"><span class="x-tick" aria-hidden="true"></span><span><b>Second review</b><span>Add a second reader review</span></span><a class="x-btn x-btn--sm" href="#top" data-toast="Section editor opens in the next mockup">Add</a></li>
+                <li class="is-miss"><span class="x-tick" aria-hidden="true"></span><span><b>Look inside</b><span>Add sample pages or table of contents</span></span><a class="x-btn x-btn--sm" href="#top" data-toast="Section editor opens in the next mockup">Add</a></li>
+                <li class="is-done"><span class="x-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>About the author</li>
+                <li class="is-miss"><span class="x-tick" aria-hidden="true"></span><span><b>Guarantee</b><span>Add a money-back promise</span></span><a class="x-btn x-btn--sm" href="#top" data-toast="Section editor opens in the next mockup">Add</a></li>
+              </ul>
+              <p class="x-tipline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg>Pages with every section filled tend to sell better.</p>
+            </section>
+
+            <!-- 6. Orders -->
+            <section class="x-card x-s12" aria-labelledby="x-ord-h">
+              <div class="x-cardhead">
+                <div><h2 id="x-ord-h">Recent orders</h2><p>Every buyer's email is yours to keep.</p></div>
+              </div>
+              <table class="x-table">
+                <thead><tr><th scope="col">Reader</th><th scope="col">Email</th><th scope="col">Book</th><th scope="col">Format</th><th scope="col">Amount</th><th scope="col">Status</th><th scope="col">When</th></tr></thead>
+                <tbody>
+                  <tr><td class="x-c-reader"><span class="x-reader"><span class="x-ini">JM</span>Jasmine Moore</span></td><td class="x-c-email x-mute x-mono">j***@gmail.com</td><td class="x-c-book"><span class="x-bookcell"><img class="x-thumb" src="cover-hwmfl.jpg" alt="" />He Was My First Love</span></td><td class="x-c-format">Ebook</td><td class="x-c-amt x-amt">$2.99</td><td class="x-c-status"><span class="x-status x-status--paid">Paid</span></td><td class="x-c-time x-mute">12 min ago</td></tr>
+                  <tr><td class="x-c-reader"><span class="x-reader"><span class="x-ini">TR</span>Tasha Reynolds</span></td><td class="x-c-email x-mute x-mono">t***@yahoo.com</td><td class="x-c-book"><span class="x-bookcell"><img class="x-thumb" src="cover-hwmfl.jpg" alt="" />He Was My First Love</span></td><td class="x-c-format">Ebook</td><td class="x-c-amt x-amt">$2.99</td><td class="x-c-status"><span class="x-status x-status--deliv">Delivered</span></td><td class="x-c-time x-mute">1 hr ago</td></tr>
+                  <tr><td class="x-c-reader"><span class="x-reader"><span class="x-ini">AC</span>Amara Collins</span></td><td class="x-c-email x-mute x-mono">a***@icloud.com</td><td class="x-c-book"><span class="x-bookcell"><img class="x-thumb" src="cover-hwmfl.jpg" alt="" />He Was My First Love</span></td><td class="x-c-format">Ebook</td><td class="x-c-amt x-amt">$2.99</td><td class="x-c-status"><span class="x-status x-status--deliv">Delivered</span></td><td class="x-c-time x-mute">3 hr ago</td></tr>
+                  <tr><td class="x-c-reader"><span class="x-reader"><span class="x-ini">KB</span>Kayla Brooks</span></td><td class="x-c-email x-mute x-mono">k***@outlook.com</td><td class="x-c-book"><span class="x-bookcell"><img class="x-thumb" src="cover-hwmfl.jpg" alt="" />He Was My First Love</span></td><td class="x-c-format">Ebook</td><td class="x-c-amt x-amt is-ref">$2.99</td><td class="x-c-status"><span class="x-status x-status--ref">Refunded</span></td><td class="x-c-time x-mute">Yesterday</td></tr>
+                  <tr><td class="x-c-reader"><span class="x-reader"><span class="x-ini">DW</span>Danielle White</span></td><td class="x-c-email x-mute x-mono">d***@gmail.com</td><td class="x-c-book"><span class="x-bookcell"><img class="x-thumb" src="cover-hwmfl.jpg" alt="" />He Was My First Love</span></td><td class="x-c-format">Ebook</td><td class="x-c-amt x-amt">$2.99</td><td class="x-c-status"><span class="x-status x-status--deliv">Delivered</span></td><td class="x-c-time x-mute">2 days ago</td></tr>
+                </tbody>
+              </table>
+              <div class="x-cardfoot"><a class="x-link" href="#/orders">View all orders →</a></div>
+            </section>
+
+            <!-- 7. Readers -->
+            <section class="x-card x-s5 x-split" aria-labelledby="x-rd-h">
+              <div class="x-cardhead">
+                <div><h2 id="x-rd-h">New readers</h2><p>Joined your list</p></div>
+              </div>
+              <ul class="x-people">
+                <li><span class="x-ini">JM</span><span class="x-who"><b>Jasmine Moore</b><span>Bought book · 12 min ago</span></span><span class="x-bought x-bought--yes">Buyer</span></li>
+                <li><span class="x-ini">NP</span><span class="x-who"><b>Nicole Parker</b><span>Free journal · 40 min ago</span></span><span class="x-bought x-bought--no">Not bought</span></li>
+                <li><span class="x-ini">TR</span><span class="x-who"><b>Tasha Reynolds</b><span>Referral · 1 hr ago</span></span><span class="x-bought x-bought--yes">Buyer</span></li>
+                <li><span class="x-ini">MG</span><span class="x-who"><b>Monique Grant</b><span>Free journal · 2 hr ago</span></span><span class="x-bought x-bought--no">Not bought</span></li>
+                <li><span class="x-ini">BL</span><span class="x-who"><b>Brianna Lewis</b><span>Free journal · 5 hr ago</span></span><span class="x-bought x-bought--yes">Buyer</span></li>
+              </ul>
+              <div class="x-cardfoot"><a class="x-link" href="#/readers">View all readers →</a></div>
+            </section>
+
+            <!-- 8. Emails -->
+            <section class="x-card x-s7 x-split" id="x-emails" aria-labelledby="x-em-h">
+              <div class="x-cardhead">
+                <div><h2 id="x-em-h">Follow-up emails</h2><p>Sent to free-gift readers who haven't bought yet</p></div>
+                <a class="x-btn x-btn--sm" href="#/emails">Edit</a>
+              </div>
+              <ol class="x-seq">
+                <li><span class="x-day"><span><small>Day</small><b>0</b></span></span><div><div class="x-subj">Your free Heartbreak Journal is here</div><div><span class="x-status x-status--live">Approved</span></div></div><div class="x-rate"><b>68%</b><span>opened</span></div></li>
+                <li><span class="x-day"><span><small>Day</small><b>2</b></span></span><div><div class="x-subj">The spiral stops here</div><div><span class="x-status x-status--live">Approved</span></div></div><div class="x-rate"><b>52%</b><span>opened</span></div></li>
+                <li><span class="x-day"><span><small>Day</small><b>5</b></span></span><div><div class="x-subj">Your launch price ends soon</div><div><span class="x-status x-status--draft">Draft</span></div></div><div class="x-rate"><b>–</b><span>not sent yet</span></div></li>
+              </ol>
+              <div class="x-cardfoot"><p class="x-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>Emails stop automatically once a reader buys.</p></div>
+            </section>
+          </div>
+          <script type="application/json" id="x-daily">
+            {"start":"2025-09-15","sales":[0,1,1,2,1,1,1,3,2,1,0,1,2,1,1,0,2,3,1,2,1,1,4,3,2,1,2,3,2,2],"signups":[6,8,5,9,7,4,6,11,10,8,5,7,9,8,7,6,10,12,9,11,8,9,14,13,10,9,11,12,10,11]}
+          </script>
+        </div>
+
+        <div class="x-placeholder" id="x-placeholder" hidden>
+          <div>
+            <div class="x-phicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 13h8M8 16h5"/></svg></div>
+            <h2 id="x-phtitle">Books</h2>
+            <p>This screen is in the next mockup.</p>
+            <a class="x-btn x-btn--plum" href="#/dashboard">Back to Dashboard</a>
+          </div>
+        </div>
+
+        <div class="x-mk" id="x-mkt" hidden>
+          <div class="x-top">
+            <div class="x-greet">
+              <h1>Marketing hub</h1>
+              <p><span>Find podcasts, bloggers and creators whose audience fits your book, pitch them, and track what sells.</span> <span class="x-sample">Sample data</span></p>
+            </div>
+            <div class="x-actions">
+              <label class="x-select">
+                <svg class="x-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5z"/><path d="M4 19a2 2 0 0 1 2-2h13v4H6a2 2 0 0 1-2-2z"/></svg>
+                <select id="mk-book" aria-label="Book">
+                  <option selected>He Was My First Love</option>
+                  <option>The Peace Check Journal</option>
+                </select>
+                <svg class="x-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+              </label>
+            </div>
+          </div>
+          <div class="x-tabs" role="tablist" aria-label="Marketing hub">
+            <button class="x-tab" type="button" role="tab" id="mk-t0" aria-controls="mk-p0" aria-selected="true">Find contacts</button>
+            <button class="x-tab" type="button" role="tab" id="mk-t1" aria-controls="mk-p1" aria-selected="false">Outreach board</button>
+            <button class="x-tab" type="button" role="tab" id="mk-t2" aria-controls="mk-p2" aria-selected="false">Tracked links</button>
+          </div>
+
+          <section role="tabpanel" id="mk-p0" aria-labelledby="mk-t0">
+            <p class="x-tipline x-mk-gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg><span>Free plan: 10 starter contacts a month. Unlock full matching on Pro.</span><a class="x-btn x-btn--gold x-btn--sm" href="#/marketing" data-toast="Pro plans open in the next mockup">See Pro</a></p>
+            <div class="x-card x-mk-filters">
+              <fieldset><legend>Type</legend><div class="x-wz-chips" id="mk-types"></div></fieldset>
+              <fieldset><legend>Topic</legend><div class="x-wz-chips" id="mk-topics"></div></fieldset>
+              <div><label class="x-mk-lbl" for="mk-size">Audience size</label>
+                <select class="x-mk-in" id="mk-size"><option value="0">Any size</option><option value="1">Under 10k</option><option value="2">10k to 50k</option><option value="3">50k and up</option></select></div>
+            </div>
+            <div class="x-mk-res"><h2 id="mk-count">12 matches for your book</h2><span class="x-mute">Sorted by fit</span></div>
+            <ul class="x-mk-cards" id="mk-cards"></ul>
+          </section>
+
+          <section role="tabpanel" id="mk-p1" aria-labelledby="mk-t1" hidden>
+            <div class="x-mk-board" id="mk-board" tabindex="0" aria-label="Outreach board"></div>
+          </section>
+
+          <section role="tabpanel" id="mk-p2" aria-labelledby="mk-t2" hidden>
+            <div class="x-card">
+              <div class="x-cardhead">
+                <div><h2>Tracked links</h2><p>One link per place you promote, so you can see what sells.</p></div>
+                <button class="x-btn x-btn--plum" type="button" data-toast="New tracked link form opens in the next mockup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Create tracked link</button>
+              </div>
+              <p class="x-tipline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>Paid or gifted promotions must be labelled #ad, per FTC rules.</p>
+              <table class="x-table x-mk-links">
+                <thead><tr><th>Name</th><th>Short link</th><th>Clicks</th><th>Signups</th><th>Sales</th><th>Revenue</th><th><span class="x-mute">Copy</span></th></tr></thead>
+                <tbody id="mk-links"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+        <div class="x-mk x-lk" id="x-lk" hidden>
+          <div class="x-top">
+            <div class="x-greet">
+              <h1>Your launch kit</h1>
+              <p><span>Everything you need to announce your book, ready to copy and share.</span> <span class="x-sample">Sample data</span> <span class="x-status x-status--live">Included on every plan</span></p>
+            </div>
+            <div class="x-actions">
+              <label class="x-select">
+                <svg class="x-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5z"/><path d="M4 19a2 2 0 0 1 2-2h13v4H6a2 2 0 0 1-2-2z"/></svg>
+                <select id="lk-book" aria-label="Book">
+                  <option selected>He Was My First Love</option>
+                  <option>The Peace Check Journal</option>
+                </select>
+                <svg class="x-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+              </label>
+            </div>
+          </div>
+          <div class="x-tabs" role="tablist" aria-label="Launch kit" id="lk-tabs"></div>
+
+          <section class="x-card" role="tabpanel" id="lk-p0" aria-labelledby="lk-t0">
+            <div class="x-cardhead"><div><h2>Launch checklist</h2><p>Your first 14 days, one post or email at a time.</p></div></div>
+            <div class="x-progress" style="margin: 0 0 8px"><div class="x-bar" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0" aria-label="Launch checklist progress" id="lk-bar"><span></span></div><b id="lk-prog">0 of 7 done</b></div>
+            <ol class="x-seq" id="lk-days"></ol>
+          </section>
+
+          <section role="tabpanel" id="lk-p1" aria-labelledby="lk-t1" hidden>
+            <ul class="x-mk-cards" id="lk-posts"></ul>
+          </section>
+
+          <section class="x-card" role="tabpanel" id="lk-p2" aria-labelledby="lk-t2" hidden>
+            <div class="x-cardhead">
+              <div><h2>Announcement email to your readers</h2><p>Goes to everyone on your list, buyers and free-gift readers.</p></div>
+              <div class="x-actions" style="width:auto">
+                <button class="x-btn" type="button" id="lk-medit">Edit</button>
+                <button class="x-btn x-btn--plum" type="button" data-toast="Demo only: no emails were sent">Send to 312 readers</button>
+              </div>
+            </div>
+            <div class="x-lk-mail" id="lk-mail"></div>
+          </section>
+
+          <section role="tabpanel" id="lk-p3" aria-labelledby="lk-t3" hidden>
+            <ul class="x-lk-gfx x-mk-cards" id="lk-gfx"></ul>
+            <img id="lk-cover" src="cover-hwmfl.jpg" alt="" hidden />
+          </section>
+
+          <section class="x-card" role="tabpanel" id="lk-p4" aria-labelledby="lk-t4" hidden>
+            <div class="x-cardhead">
+              <div><h2>Talk &amp; event slide</h2><p>Show at talks, churches and events.</p></div>
+              <button class="x-btn" type="button" data-toast="Demo only: slide download (1920 × 1080)">Download</button>
+            </div>
+            <div class="x-lk-slide" role="img" aria-label="Slide with the cover of He Was My First Love, the title, a QR code space and the book link">
+              <img src="cover-hwmfl.jpg" alt="" />
+              <div>
+                <h3>He Was My First Love</h3>
+                <p>Healing from heartbreak, one decision at a time. Ebook $2.99.</p>
+                <span class="x-mono">bookfront.app/theroyalwriter/he-was-my-first-love</span>
+              </div>
+              <div class="x-lk-qr"><span>QR code</span></div>
+            </div>
+          </section>
+        </div>
+        <div class="x-mk" id="x-cmp" hidden>
+          <div class="x-top">
+            <div class="x-greet">
+              <h1>Email campaigns</h1>
+              <p><span>Email your readers about launches, price drops and new books.</span> <span class="x-sample">Sample data</span></p>
+            </div>
+            <div class="x-actions">
+              <button class="x-btn x-btn--gold" type="button" id="cr-new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>New campaign</button>
+            </div>
+          </div>
+          <div class="x-stats x-cr-stats">
+            <div class="x-stat"><span class="x-stat__label">Readers</span><span class="x-stat__fig">312</span><span class="x-stat__sub">Opted in to your emails</span></div>
+            <div class="x-stat"><span class="x-stat__label">Average open rate</span><span class="x-stat__fig">48%</span><span class="x-stat__sub">Sent campaigns</span></div>
+            <div class="x-stat"><span class="x-stat__label">Average click rate</span><span class="x-stat__fig">6.1%</span><span class="x-stat__sub">Sent campaigns</span></div>
+          </div>
+          <section class="x-card" aria-labelledby="cr-ch">
+            <div class="x-cardhead"><div><h2 id="cr-ch">Campaigns</h2><p>One-off emails to your list</p></div></div>
+            <div class="x-cr-scroll">
+              <table class="x-table x-cr-tbl" style="--n: 4">
+                <thead><tr><th scope="col">Campaign</th><th scope="col">Status</th><th scope="col" class="x-cr-num">Sent</th><th scope="col" class="x-cr-num">Opens</th><th scope="col" class="x-cr-num">Clicks</th><th scope="col">Sales</th></tr></thead>
+                <tbody id="cr-camps"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="x-card x-cr-comp" id="cr-comp" aria-labelledby="cr-comph" hidden>
+            <div class="x-cardhead">
+              <div><h2 id="cr-comph">New campaign</h2><p>Write once, preview on desktop and phone, then send or schedule.</p></div>
+              <button class="x-btn x-btn--icon" type="button" id="cr-close" aria-label="Close composer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+            <div class="x-cr-cols">
+              <div class="x-cr-form">
+                <fieldset><legend>Audience</legend><div class="x-wz-chips" id="cr-aud"></div></fieldset>
+                <div id="cr-tagwrap" hidden><label class="x-mk-lbl" for="cr-tag">Tag</label><select class="x-mk-in" id="cr-tag"></select></div>
+                <div><label class="x-mk-lbl" for="cr-subj">Subject</label><input class="x-mk-in" id="cr-subj" type="text" value="Last call: He Was My First Love at $2.99" /></div>
+                <div><label class="x-mk-lbl" for="cr-pre">Preview text</label><input class="x-mk-in" id="cr-pre" type="text" value="The launch price ends Sunday night." /></div>
+                <div>
+                  <span class="x-mk-lbl" id="cr-edl">Body</span>
+                  <div class="x-cr-tools" role="toolbar" aria-label="Formatting" id="cr-tools">
+                    <button class="x-btn x-btn--sm" type="button" data-cmd="bold" aria-label="Bold"><b>B</b></button>
+                    <button class="x-btn x-btn--sm" type="button" data-cmd="italic" aria-label="Italic"><i>I</i></button>
+                    <button class="x-btn x-btn--sm" type="button" data-cmd="insertUnorderedList" aria-label="Bulleted list"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg></button>
+                    <button class="x-btn x-btn--sm" type="button" data-cmd="createLink" aria-label="Link selected text to your book"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
+                    <button class="x-btn x-btn--sm x-btn--plum" type="button" id="cr-book"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5z"/><path d="M4 19a2 2 0 0 1 2-2h13v4H6a2 2 0 0 1-2-2z"/></svg>Insert book card</button>
+                  </div>
+                  <div class="x-mk-in x-cr-ed" id="cr-ed" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="cr-edl"><p>Hi friend,</p><p>Thank you for being here for launch week. The launch price of <b>$2.99</b> ends Sunday night, then the ebook goes back to $9.99.</p><p>If a first love still has a hold on you, this is the book I wrote for you.</p></div>
+                </div>
+                <div class="x-cr-send">
+                  <button class="x-btn x-btn--plum" type="button" id="cr-send">Send now</button>
+                  <label class="x-mk-lbl" for="cr-when" style="margin:0"><span class="x-mute">Schedule for</span><input class="x-mk-in" id="cr-when" type="datetime-local" value="2025-10-20T09:00" /></label>
+                  <button class="x-btn" type="button" id="cr-sched">Schedule</button>
+                </div>
+              </div>
+              <div class="x-cr-pvwrap">
+                <div class="x-wz-prevhead">
+                  <span class="x-mk-lbl" style="margin:0">Preview</span>
+                  <div class="x-tabs x-tabs--sm" role="tablist" aria-label="Preview size" id="cr-dev">
+                    <button class="x-tab" type="button" role="tab" aria-selected="true" data-dev="0">Desktop</button>
+                    <button class="x-tab" type="button" role="tab" aria-selected="false" data-dev="1">Mobile</button>
+                  </div>
+                </div>
+                <div class="x-cr-pv" id="cr-pv">
+                  <div class="x-cr-pvhead"><span class="x-mute">From The Royal Writer · to <span id="cr-pvto">312 readers</span></span><b id="cr-pvsubj"></b><span class="x-mute" id="cr-pvpre"></span></div>
+                  <div class="x-cr-pvbody" id="cr-pvbody"></div>
+                  <div class="x-cr-pvfoot">You're getting this because you opted in at bookfront.app/theroyalwriter. <u>Unsubscribe</u></div>
+                </div>
+              </div>
+            </div>
+            <div class="x-cardfoot"><p class="x-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>Every email includes an unsubscribe link. Only readers who opted in are emailed.</p></div>
+            <div hidden id="cr-booktpl"><div class="x-cr-book" contenteditable="false"><img src="cover-hwmfl.jpg" alt="Cover of He Was My First Love" /><div><b>He Was My First Love</b><span class="x-price">Ebook $2.99 <s>$9.99</s></span><span class="x-btn x-btn--gold x-btn--sm">Buy the ebook</span></div></div></div>
+          </section>
+        </div>
+
+        <div class="x-mk" id="x-ref" hidden>
+          <div class="x-top">
+            <div class="x-greet">
+              <h1>Reader referrals</h1>
+              <p><span>Turn happy readers into your sales team.</span> <span class="x-sample">Sample data</span></p>
+            </div>
+          </div>
+          <div class="x-stats x-cr-stats">
+            <div class="x-stat"><span class="x-stat__label">Referrers</span><span class="x-stat__fig">23</span><span class="x-stat__sub">Readers sharing a link</span></div>
+            <div class="x-stat"><span class="x-stat__label">Clicks</span><span class="x-stat__fig">61</span><span class="x-stat__sub">On referral links</span></div>
+            <div class="x-stat"><span class="x-stat__label">Referred sales</span><span class="x-stat__fig">14</span><span class="x-stat__sub">Friends who bought</span></div>
+            <div class="x-stat x-stat--gold"><span class="x-stat__label">Revenue</span><span class="x-stat__fig">$41.86</span><span class="x-stat__sub">From referred sales</span></div>
+          </div>
+          <div class="x-grid">
+            <section class="x-card x-s7" aria-labelledby="cr-seth">
+              <div class="x-cardhead"><div><h2 id="cr-seth">Referral settings</h2><p>What readers and their friends get</p></div><span class="x-status x-status--live" id="cr-refstate">On</span></div>
+              <div class="x-cr-set">
+                <label class="x-wz-toggle" for="cr-refon"><span><b>Referrals</b><small>Show the share page to readers after they buy</small></span><input class="x-wz-sw" type="checkbox" role="switch" id="cr-refon" checked /></label>
+                <fieldset><legend>Reward type</legend><div class="x-wz-chips" id="cr-rw"></div></fieldset>
+              </div>
+              <p class="x-cr-sum" id="cr-rwsum" aria-live="polite"></p>
+            </section>
+            <section class="x-card x-s5" aria-labelledby="cr-sph">
+              <div class="x-cardhead"><div><h2 id="cr-sph">Reader share page preview</h2><p>What a reader sees</p></div></div>
+              <div class="x-cr-phone">
+                <img src="cover-hwmfl.jpg" alt="Cover of He Was My First Love" />
+                <h3>Love this book? Share it with a friend.</h3>
+                <p>They get 20% off, you get the Heartbreak Workbook free.</p>
+                <div class="x-urlrow"><div class="x-url"><span>bookfront.app/r/he-was-my-first-love?ref=jasmine</span></div></div>
+                <button class="x-btn x-btn--plum x-copy" type="button" data-url="bookfront.app/r/he-was-my-first-love?ref=jasmine"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h9"/></svg><span>Copy</span></button>
+                <div class="x-share">
+                  <button class="x-btn x-btn--icon" type="button" aria-label="Share on Facebook" data-toast="Share to Facebook (mockup)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v2H7v4h3v8h4v-8h3l1-4h-4V8z"/></svg></button>
+                  <button class="x-btn x-btn--icon" type="button" aria-label="Share on X" data-toast="Share to X (mockup)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.8 3h3.1l-6.8 7.8L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.3-8.3L2 3h6.4l4.4 5.8zm-1.1 16.2h1.7L7.4 4.7H5.6z"/></svg></button>
+                  <button class="x-btn x-btn--icon" type="button" aria-label="Share by text message" data-toast="Share by text (mockup)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></button>
+                  <button class="x-btn x-btn--icon" type="button" aria-label="Share by email" data-toast="Share by email (mockup)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></button>
+                </div>
+              </div>
+            </section>
+            <section class="x-card x-s12" aria-labelledby="cr-fh">
+              <div class="x-cardhead"><div><h2 id="cr-fh">Top superfans</h2><p>Readers sending you the most buyers</p></div></div>
+              <div class="x-cr-scroll">
+                <table class="x-table x-cr-tbl" style="--n: 3">
+                  <thead><tr><th scope="col">Reader</th><th scope="col">Referral link</th><th scope="col" class="x-cr-num">Clicks</th><th scope="col" class="x-cr-num">Sales</th><th scope="col">Reward</th></tr></thead>
+                  <tbody id="cr-fans"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </div>
+        <div class="x-mk-scrim" id="mk-scrim" hidden></div>
+        <aside class="x-mk-drawer" id="mk-drawer" role="dialog" aria-modal="true" aria-labelledby="mk-dname" hidden></aside>
+
+        <section class="x-card x-wz" id="x-wizard" aria-labelledby="x-wz-h" hidden>
+          <div class="x-cardhead">
+            <div>
+              <h2 id="x-wz-h">Add a book</h2>
+              <p><span id="w-prefill">Prefilled with He Was My First Love.</span> <a class="x-link" href="#/books/new" id="w-blank">Start blank</a></p>
+            </div>
+            <span class="x-status x-status--draft" id="w-state">Unsaved draft</span>
+          </div>
+          <nav aria-label="Wizard steps"><ol class="x-wz-steps" id="w-steps"></ol></nav>
+          <div class="x-wz-count" id="w-count" aria-live="polite"></div>
+          <div id="w-panels"></div>
+          <div id="w-imgsrc" hidden>
+            <img data-src-img="hwmfl" class="x-cover" src="cover-hwmfl.jpg" alt="Cover of He Was My First Love" />
+            <img data-src-img="journal" class="x-cover" src="cover-journal.jpg" alt="Cover of the free journal, The First Aid Kit for Your Heart" />
+            <img data-src-img="prev" src="cover-hwmfl.jpg" alt="" />
+          </div>
+          <div class="x-wz-done" id="w-done" tabindex="-1" hidden>
+            <div class="x-wz-doneicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></div>
+            <h3>Your sales page is live</h3>
+            <p>Share the link. Readers can buy right away.</p>
+            <div class="x-urlrow">
+              <div class="x-url"><span id="w-url"></span></div>
+              <button class="x-btn x-btn--sm" type="button" id="w-copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h9"/></svg><span>Copy</span></button>
+            </div>
+            <div class="x-btnrow">
+              <a class="x-btn x-btn--gold" href="#/launch-kit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg>Get your launch kit</a>
+              <button class="x-btn" type="button" id="w-share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 15V3M8 7l4-4 4 4M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/></svg>Share</button>
+              <a class="x-btn x-btn--plum" href="#/dashboard">Go to dashboard</a>
+            </div>
+          </div>
+          <div class="x-wz-foot" id="w-foot">
+            <button class="x-btn" type="button" id="w-back">← Back</button>
+            <div>
+              <button class="x-btn" type="button" id="w-save">Save draft</button>
+              <button class="x-btn x-btn--plum" type="button" id="w-next">Next →</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div class="x-toast" id="x-toast" role="status" aria-live="polite"></div>
+
+    <script src="hark.js"></script>
+    <script src="chart.js"></script>
+    <script src="datalabels.js"></script>
+    <script src="hark-charts.js"></script>
+    <script>
+      (function () {
+        var body = document.body;
+        var toastEl = document.getElementById("x-toast"), toastT;
+        function toast(msg) {
+          toastEl.textContent = msg;
+          toastEl.classList.add("is-on");
+          clearTimeout(toastT);
+          toastT = setTimeout(function () { toastEl.classList.remove("is-on"); }, 2200);
+        }
+        document.addEventListener("click", function (e) {
+          var t = e.target.closest("[data-toast]");
+          if (t) { e.preventDefault(); toast(t.getAttribute("data-toast")); }
+        });
+
+        // mobile menu
+        var burger = document.getElementById("x-burger");
+        function menu(open) {
+          body.classList.toggle("is-menu", open);
+          burger.setAttribute("aria-expanded", open ? "true" : "false");
+        }
+        burger.addEventListener("click", function () { menu(!body.classList.contains("is-menu")); });
+        document.getElementById("x-close").addEventListener("click", function () { menu(false); });
+        document.getElementById("x-scrim").addEventListener("click", function () { menu(false); });
+        document.addEventListener("keydown", function (e) { if (e.key === "Escape") menu(false); });
+
+        // marketing hub (all contacts are fictional samples)
+        var mk$ = function (id) { return document.getElementById("mk-" + id); };
+        var TYPES = ["Podcast", "Blog", "Instagram", "TikTok", "YouTube", "Newsletter"];
+        var UNIT = { Podcast: "listeners", Blog: "monthly readers", Instagram: "followers", TikTok: "followers", YouTube: "subscribers", Newsletter: "subscribers" };
+        var ASK = { Podcast: ["listening to", "come on as a guest"], Blog: ["reading", "write a guest post, or send you a review copy"], Instagram: ["following", "send you a copy for a post or a live chat"], TikTok: ["following", "send you a copy for a video or a live chat"], YouTube: ["watching", "join one of your book club videos"], Newsletter: ["reading", "write a short guest letter for your readers"] };
+        var MATCH = [
+          ["The Healing Hour Podcast", "Podcast", 48, 94, "Weekly episodes on moving on after a first heartbreak.", 1],
+          ["Soft Reset Newsletter", "Newsletter", 22, 91, "Sunday letters on self-worth for women rebuilding after a breakup."],
+          ["@hearthealing.daily", "Instagram", 86, 89, "Daily posts on letting go; followers save and share book picks."],
+          ["Mended & Whole Blog", "Blog", 15, 87, "Reviews faith-friendly self-help written for women."],
+          ["@lettinggo.with.leah", "TikTok", 132, 85, "Short stories about first love; book recs get heavy comments."],
+          ["Second Chapter Sisters", "YouTube", 41, 84, "Book club videos on relationships and healing."],
+          ["Love Lessons Radio", "Podcast", 9, 82, "Interviews authors about the patterns we repeat in love."],
+          ["The Quiet Bloom", "Newsletter", 7, 80, "Gentle self-care letters that feature one book a month."],
+          ["@selflove.shelf", "Instagram", 28, 78, "Bookstagram for women's self-help titles."],
+          ["Brave Again Blog", "Blog", 31, 76, "Personal essays on learning to trust after heartbreak."],
+          ["@moveon.monday", "TikTok", 64, 74, "Weekly breakup recovery tips with a young female audience."],
+          ["Heart Repair Talks", "YouTube", 12, 71, "Counselor-led talks on attachment and healing."]
+        ];
+        var STAGES = ["To pitch", "Pitched", "Follow up due", "Booked", "Not now"];
+        var BOARD = [
+          ["Whole Hearted Women", "Podcast", 35, "Mara Ellis", 0, "Found Oct 20"],
+          ["@gentle.healing.notes", "Instagram", 19, "Joy Okafor", 0, "Found Oct 22"],
+          ["Faith & Fresh Starts Blog", "Blog", 12, "Ruth Daniels", 0, "Found Oct 24"],
+          ["The Unbroken Letter", "Newsletter", 9, "Tess Moreau", 0, "Found Oct 25"],
+          ["Rebuild Radio", "Podcast", 27, "Nina Park", 1, "Pitched Oct 21"],
+          ["@healwithhanna", "TikTok", 54, "Hanna Lind", 1, "Pitched Oct 22"],
+          ["Women Rising Reads", "YouTube", 18, "Ada Brooks", 1, "Pitched Oct 23"],
+          ["Tender Truths Podcast", "Podcast", 22, "Lena Cruz", 2, "Pitched Oct 15"],
+          ["Open Heart Weekly", "Newsletter", 14, "Gwen Hale", 2, "Pitched Oct 16"],
+          ["The Healing Hour Podcast", "Podcast", 48, "Dana Rivers", 3, "Interview Nov 4"],
+          ["@breakup.bestie", "TikTok", 210, "Kiki Shaw", 4, "No guests until January"]
+        ].map(function (b, i) { return { id: i, name: b[0], type: b[1], aud: b[2], host: b[3], stage: b[4], tag: b[5], fu: 5, note: "" }; });
+        var LINKS = [["Healing Hour episode", "heal-hour", 412, 58, 19], ["Instagram bio", "insta-bio", 286, 41, 11], ["Soft Reset feature", "soft-reset", 198, 33, 8], ["TikTok first love series", "tiktok-love", 534, 47, 9], ["Church talk Nov 9", "church-nov9", 0, 0, 0]];
+        var esc = function (s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); };
+        var ini = function (n) { return n.replace(/^(@|The )/, "").charAt(0).toUpperCase(); };
+        var aud = function (k, t) { return (k >= 1000 ? (k / 1000).toFixed(1).replace(".0", "") + "M" : k + "k") + " " + UNIT[t]; };
+        var slugOf = function (n) { return n.toLowerCase().replace(/[^a-z0-9]+/g, "") ; };
+        var chip = function (label, on) { return '<button class="x-wz-chip" type="button" aria-pressed="' + on + '">' + label + "</button>"; };
+
+        mk$("types").innerHTML = ["Podcasts", "Blogs", "Instagram", "TikTok", "YouTube", "Newsletters"].map(function (t, i) { return chip(t, false).replace("<button", '<button data-type="' + TYPES[i] + '"'); }).join("");
+        mk$("topics").innerHTML = ["Heartbreak", "Healing", "Women's self-help", "Relationships"].map(function (t) { return chip(t, true); }).join("");
+        function renderMatches() {
+          var on = [].map.call(mk$("types").querySelectorAll('[aria-pressed="true"]'), function (b) { return b.getAttribute("data-type"); });
+          var sz = +mk$("size").value;
+          var list = MATCH.filter(function (m) {
+            var a = m[2];
+            return (!on.length || on.indexOf(m[1]) > -1) && (!sz || (sz === 1 ? a < 10 : sz === 2 ? a >= 10 && a < 50 : a >= 50));
+          });
+          mk$("count").textContent = list.length + (list.length === 1 ? " match" : " matches") + " for your book";
+          mk$("cards").innerHTML = list.length ? list.map(function (m) {
+            var i = MATCH.indexOf(m);
+            return '<li class="x-card"><div class="x-mk-who"><span class="x-ini" aria-hidden="true">' + ini(m[0]) + "</span><div><b>" + esc(m[0]) + "</b><small>" + m[1] + " · " + aud(m[2], m[1]) + '</small></div><span class="x-mk-fit"><b>' + m[3] + '%</b><small class="x-mute">fit</small></span></div><p><b>Why it fits:</b> ' + esc(m[4]) + "</p>" +
+              (m[5] ? '<button class="x-btn x-btn--sm" type="button" disabled>On board ✓</button>' : '<button class="x-btn x-btn--sm x-btn--plum" type="button" data-add="' + i + '">Add to board</button>') + "</li>";
+          }).join("") : '<li class="x-mute">No matches for these filters. Try another type or size.</li>';
+        }
+        mk$("types").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) { b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true"); renderMatches(); } });
+        mk$("topics").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true"); });
+        mk$("size").addEventListener("change", renderMatches);
+        mk$("cards").addEventListener("click", function (e) {
+          var b = e.target.closest("[data-add]"); if (!b) return;
+          var m = MATCH[+b.getAttribute("data-add")];
+          m[5] = 1;
+          BOARD.push({ id: BOARD.length, name: m[0], type: m[1], aud: m[2], host: "the host", stage: 0, tag: "Added today", fu: 5, note: "", why: m[4] });
+          b.outerHTML = '<button class="x-btn x-btn--sm" type="button" disabled>On board ✓</button>';
+          renderBoard();
+          toast(m[0] + " added to To pitch");
+        });
+
+        function renderBoard() {
+          mk$("board").innerHTML = STAGES.map(function (s, si) {
+            var items = BOARD.filter(function (b) { return b.stage === si; });
+            return '<section class="x-mk-col" aria-label="' + s + '"><h3>' + s + "<span>" + items.length + "</span></h3><ul>" + items.map(function (b) {
+              var tag = si === 2 ? '<span class="x-status x-status--ref">Due today</span><small>' + b.tag + "</small>" : si === 3 ? '<span class="x-status x-status--live">' + b.tag + "</span>" : "<small>" + b.tag + "</small>";
+              return '<li><button class="x-mk-tile" type="button" data-card="' + b.id + '"><b>' + esc(b.name) + "</b><small>" + b.type + " · " + aud(b.aud, b.type) + "</small>" + tag + "</button></li>";
+            }).join("") + "</ul></section>";
+          }).join("");
+        }
+        function pitchFor(b) {
+          var a = ASK[b.type], why = b.why ? " Your focus on " + b.why.charAt(0).toLowerCase() + b.why.slice(1, -1) + " is exactly why I'm writing." : "";
+          return "Hi " + (b.host === "the host" ? "there" : b.host.split(" ")[0]) + ",\n\nI've been " + a[0] + " " + b.name + " for a while, and your audience is the reader I wrote He Was My First Love for: women working through the end of a first love and learning to trust themselves again." + why + "\n\nI'd love to " + a[1] + ". A few angles I could bring:\n• Why a first heartbreak hits harder than the ones after it\n• Small daily habits that help you stop checking his page\n• Healing with faith, without rushing forgiveness\n\nHappy to send you a free copy first. The book is at bookfront.app/theroyalwriter/he-was-my-first-love.\n\nWarmly,\nThe Royal Writer";
+        }
+        var drawer = mk$("drawer"), scrim = mk$("scrim"), cur = null, lastTile = null;
+        function openCard(b) {
+          cur = b;
+          if (!b.pitch) b.pitch = pitchFor(b);
+          if (!b.subj) b.subj = "Guest idea for " + b.name + ": healing after a first love";
+          drawer.innerHTML =
+            '<div class="x-cardhead"><div class="x-mk-who"><span class="x-ini" aria-hidden="true">' + ini(b.name) + '</span><div><h2 id="mk-dname">' + esc(b.name) + "</h2><small>" + b.type + " · " + aud(b.aud, b.type) + '</small></div></div><button class="x-btn x-btn--icon" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>' +
+            '<dl class="x-mk-dl"><dt>Stage</dt><dd>' + STAGES[b.stage] + " · " + esc(b.tag) + "</dd><dt>Host</dt><dd>" + esc(b.host === "the host" ? "Not listed yet" : b.host) + "</dd><dt>Contact</dt><dd class=\"x-mono\">hello@" + slugOf(b.name) + ".example</dd><dt>Book</dt><dd>He Was My First Love</dd></dl>" +
+            '<div><label class="x-mk-lbl" for="mk-subj">Subject line</label><input class="x-mk-in" id="mk-subj" type="text" value="' + esc(b.subj) + '" /></div>' +
+            '<div><label class="x-mk-lbl" for="mk-pitch">Pitch draft</label><textarea class="x-mk-in" id="mk-pitch" rows="12">' + esc(b.pitch) + "</textarea></div>" +
+            '<div class="x-btnrow"><button class="x-btn" type="button" id="mk-copyp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h9"/></svg><span>Copy pitch</span></button>' +
+            (b.stage === 1 ? '<button class="x-btn" type="button" disabled>Pitched ✓</button>' : '<button class="x-btn x-btn--plum" type="button" id="mk-mark">Mark as pitched</button>') + "</div>" +
+            '<fieldset class="x-mk-filters" style="border:0;margin:0;padding:0"><legend>Follow-up reminder</legend><div class="x-wz-chips" id="mk-fu">' + [3, 5, 7].map(function (d) { return chip(d + " days", b.fu === d).replace("<button", '<button data-fu="' + d + '"'); }).join("") + "</div></fieldset>" +
+            '<div><label class="x-mk-lbl" for="mk-note">Notes</label><textarea class="x-mk-in" id="mk-note" rows="3" placeholder="Best time to reach them, what they liked…">' + esc(b.note) + "</textarea></div>";
+          drawer.hidden = scrim.hidden = false;
+          drawer.querySelector("[data-close]").focus();
+        }
+        function mkClose() {
+          if (drawer.hidden) return;
+          drawer.hidden = scrim.hidden = true; cur = null;
+          if (lastTile && document.body.contains(lastTile)) lastTile.focus();
+        }
+        mk$("board").addEventListener("click", function (e) { var t = e.target.closest("[data-card]"); if (t) { lastTile = t; openCard(BOARD[+t.getAttribute("data-card")]); } });
+        scrim.addEventListener("click", mkClose);
+        document.addEventListener("keydown", function (e) { if (e.key === "Escape") mkClose(); });
+        drawer.addEventListener("input", function (e) {
+          if (!cur) return;
+          if (e.target.id === "mk-pitch") cur.pitch = e.target.value;
+          if (e.target.id === "mk-subj") cur.subj = e.target.value;
+          if (e.target.id === "mk-note") cur.note = e.target.value;
+        });
+        drawer.addEventListener("click", function (e) {
+          var t = e.target.closest("button"); if (!t || !cur) return;
+          if (t.hasAttribute("data-close")) mkClose();
+          else if (t.id === "mk-copyp") {
+            try { if (navigator.clipboard) navigator.clipboard.writeText("Subject: " + cur.subj + "\n\n" + cur.pitch).catch(function () {}); } catch (err) {}
+            t.classList.add("is-copied"); t.querySelector("span").textContent = "Copied!";
+            setTimeout(function () { t.classList.remove("is-copied"); t.querySelector("span").textContent = "Copy pitch"; }, 1800);
+          } else if (t.id === "mk-mark") {
+            var b = cur; b.stage = 1; b.tag = "Pitched today";
+            renderBoard(); mkClose();
+            lastTile = mk$("board").querySelector('[data-card="' + b.id + '"]'); if (lastTile) lastTile.focus();
+            toast(b.name + " moved to Pitched. Follow-up in " + b.fu + " days.");
+          } else if (t.hasAttribute("data-fu")) {
+            cur.fu = +t.getAttribute("data-fu");
+            [].forEach.call(drawer.querySelectorAll("[data-fu]"), function (o) { o.setAttribute("aria-pressed", o === t ? "true" : "false"); });
+            toast("Reminder set for " + cur.fu + " days after pitching");
+          }
+        });
+
+        mk$("links").innerHTML = LINKS.map(function (l) {
+          var u = "bookfront.app/r/" + l[1];
+          return "<tr><td>" + l[0] + '</td><td class="x-mono">' + u + '</td><td data-l="Clicks">' + l[2] + '</td><td data-l="Signups">' + l[3] + '</td><td data-l="Sales">' + l[4] + '</td><td data-l="Revenue" class="x-amt">$' + (l[4] * 2.99).toFixed(2) + '</td><td><button class="x-btn x-btn--sm x-copy" type="button" data-url="' + u + '" aria-label="Copy ' + u + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h9"/></svg><span>Copy</span></button></td></tr>';
+        }).join("");
+
+        var mtabs = [0, 1, 2].map(function (i) { return mk$("t" + i); });
+        mtabs.forEach(function (tb, i) {
+          tb.addEventListener("click", function () {
+            mtabs.forEach(function (o, j) { o.setAttribute("aria-selected", i === j ? "true" : "false"); mk$("p" + j).hidden = i !== j; });
+          });
+        });
+        mk$("book").addEventListener("change", function () { toast("Sample data shows He Was My First Love only"); });
+        renderMatches(); renderBoard();
+
+        // email campaigns + referrals (sample data)
+        var cr$ = function (id) { return document.getElementById("cr-" + id); };
+        var COPYBTN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h9"/></svg><span>Copy</span>';
+        var CAMPS = [
+          ["Launch announcement", "Sent Oct 10", "live", 312, "52%", "7%", 9],
+          ["Free journal reminder", "Sent Oct 13", "live", 265, "44%", "5%", 4],
+          ["Last call: launch price", "Scheduled Oct 20", "warn"],
+          ["Peace Check Journal preview", "Draft", "draft"]
+        ];
+        cr$("camps").innerHTML = CAMPS.map(function (c) {
+          var v = function (i) { return c[i] == null ? '<span class="x-mute">–</span>' : c[i]; };
+          return '<tr><td class="x-cr-full"><b>' + c[0] + '</b></td><td class="x-cr-full"><span class="x-status x-status--' + c[2] + '">' + c[1] + '</span></td><td class="x-cr-num" data-l="Sent">' + v(3) + '</td><td class="x-cr-num" data-l="Opens">' + v(4) + '</td><td class="x-cr-num" data-l="Clicks">' + v(5) + '</td><td data-l="Sales">' + v(6) + "</td></tr>";
+        }).join("");
+        var AUD = [["All readers", 312], ["Buyers", 47], ["Free journal, not bought", 265], ["Tags", 0]];
+        var TAGS = [["Superfans", 23], ["Launch team", 18], ["Book club", 12]];
+        var audI = 0;
+        cr$("aud").innerHTML = AUD.map(function (a, i) { return chip(a[0] + (a[1] ? " · " + a[1] : ""), i === 0).replace("<button", '<button data-aud="' + i + '"'); }).join("");
+        cr$("tag").innerHTML = TAGS.map(function (t, i) { return '<option value="' + i + '">' + t[0] + " · " + t[1] + " readers</option>"; }).join("");
+        function audN() { return audI === 3 ? TAGS[+cr$("tag").value][1] : AUD[audI][1]; }
+        function crPreview() {
+          var n = audN();
+          cr$("pvto").textContent = n + " readers";
+          cr$("send").textContent = "Send now to " + n;
+          cr$("pvsubj").textContent = cr$("subj").value || "Your subject line";
+          cr$("pvpre").textContent = cr$("pre").value || "Preview text shows here in the inbox";
+          cr$("pvbody").innerHTML = cr$("ed").innerHTML;
+        }
+        cr$("aud").addEventListener("click", function (e) {
+          var b = e.target.closest("[data-aud]"); if (!b) return;
+          audI = +b.getAttribute("data-aud");
+          [].forEach.call(cr$("aud").children, function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
+          cr$("tagwrap").hidden = audI !== 3;
+          crPreview();
+        });
+        cr$("tag").addEventListener("change", crPreview);
+        ["subj", "pre", "ed"].forEach(function (k) { cr$(k).addEventListener("input", crPreview); });
+        var ed = cr$("ed"), tools = cr$("tools");
+        tools.addEventListener("mousedown", function (e) { if (e.target.closest("button")) e.preventDefault(); });
+        tools.addEventListener("click", function (e) {
+          var b = e.target.closest("button"); if (!b) return;
+          var sel = window.getSelection(), inEd = sel.rangeCount && ed.contains(sel.getRangeAt(0).commonAncestorContainer);
+          if (b.id === "cr-book") {
+            var card = cr$("booktpl").firstElementChild.cloneNode(true);
+            if (inEd) { var r = sel.getRangeAt(0); r.collapse(false); var blk = r.startContainer.nodeType === 1 ? r.startContainer : r.startContainer.parentNode; blk = blk.closest("p, li"); if (blk && ed.contains(blk)) blk.after(card); else r.insertNode(card); }
+            else ed.appendChild(card);
+            toast("Book card added");
+          } else {
+            var cmd = b.getAttribute("data-cmd");
+            if (!inEd) { ed.focus(); toast("Click into the email body first"); return; }
+            if (cmd === "createLink") {
+              if (sel.isCollapsed) { toast("Select some text to link it to your book"); return; }
+              document.execCommand(cmd, false, "https://bookfront.app/theroyalwriter/he-was-my-first-love");
+            } else document.execCommand(cmd, false, null);
+          }
+          crPreview();
+        });
+        cr$("dev").addEventListener("click", function (e) {
+          var b = e.target.closest("[data-dev]"); if (!b) return;
+          [].forEach.call(cr$("dev").children, function (o) { o.setAttribute("aria-selected", o === b ? "true" : "false"); });
+          cr$("pv").classList.toggle("is-mobile", b.getAttribute("data-dev") === "1");
+        });
+        cr$("new").addEventListener("click", function () { cr$("comp").hidden = false; crPreview(); cr$("comp").scrollIntoView({ behavior: "smooth", block: "start" }); cr$("subj").focus({ preventScroll: true }); });
+        cr$("close").addEventListener("click", function () { cr$("comp").hidden = true; cr$("new").focus(); });
+        cr$("send").addEventListener("click", function () { toast("Demo only: no emails were sent to " + audN() + " readers"); });
+        cr$("sched").addEventListener("click", function () {
+          var w = cr$("when").value, d = w ? new Date(w) : null;
+          toast("Demo only: scheduled for " + (d && !isNaN(d) ? d.toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "later") + ". Nothing was sent.");
+        });
+
+        var RW = [
+          ["Free bonus chapter", "Reader gets a free bonus chapter for each friend who buys"],
+          ["Discount for a friend", "Friend gets 20% off · Reader gets the bonus Heartbreak Workbook"],
+          ["Cash commission %", "Reader earns 20% commission on each referred sale"]
+        ];
+        cr$("rw").innerHTML = RW.map(function (r, i) { return chip(r[0], i === 1).replace("<button", '<button data-rw="' + i + '"'); }).join("");
+        cr$("rwsum").textContent = RW[1][1];
+        cr$("rw").addEventListener("click", function (e) {
+          var b = e.target.closest("[data-rw]"); if (!b) return;
+          [].forEach.call(cr$("rw").children, function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
+          cr$("rwsum").textContent = RW[+b.getAttribute("data-rw")][1];
+        });
+        cr$("refon").addEventListener("change", function () {
+          var on = cr$("refon").checked, s = cr$("refstate");
+          s.textContent = on ? "On" : "Off";
+          s.className = "x-status x-status--" + (on ? "live" : "draft");
+          toast(on ? "Referrals turned on" : "Referrals turned off. Existing links stop giving rewards.");
+        });
+        var FANS = [["Jasmine Moore", "jasmine", 18, 5, 1], ["Tasha Reynolds", "tasha", 12, 3, 1], ["Brianna Lewis", "brianna", 9, 2, 1], ["Amara Collins", "amara", 8, 2, 0], ["Nicole Parker", "nicole", 6, 1, 0], ["Monique Grant", "monique", 4, 1, 0]];
+        cr$("fans").innerHTML = FANS.map(function (f) {
+          var u = "bookfront.app/r/he-was-my-first-love?ref=" + f[1];
+          return '<tr><td class="x-cr-full"><span class="x-reader"><span class="x-ini">' + f[0].split(" ").map(function (w) { return w[0]; }).join("") + "</span>" + f[0] + '</span></td><td class="x-cr-full x-cr-link"><span class="x-mono">' + u + '</span><button class="x-btn x-btn--sm x-copy" type="button" data-url="' + u + '" aria-label="Copy ' + u + '">' + COPYBTN + '</button></td><td class="x-cr-num" data-l="Clicks">' + f[2] + '</td><td class="x-cr-num" data-l="Sales">' + f[3] + '</td><td data-l="Reward">' + (f[4] ? '<span class="x-status x-status--live">Reward sent</span>' : '<span class="x-status x-status--warn">Pending</span>') + "</td></tr>";
+        }).join("");
+
+        // views
+        var dash = document.getElementById("x-dashboard"), ph = document.getElementById("x-placeholder");
+        var navs = [].slice.call(document.querySelectorAll(".x-navbtn"));
+        var sub = document.getElementById("x-viewsub");
+        var titles = { dashboard: "Dashboard", books: "Books", pages: "Sales pages", orders: "Orders", readers: "Readers", emails: "Follow-up emails", payouts: "Payouts", settings: "Settings", "books/new": "Add book", marketing: "Marketing hub", "launch-kit": "Launch kit", campaigns: "Email campaigns", referrals: "Referrals" };
+        function route() {
+          var h = location.hash;
+          if (h && h.indexOf("#/") !== 0) return; // in-page anchors
+          var r = titles[h.slice(2)] ? h.slice(2) : "dashboard";
+          var navKey = r.split("/")[0];
+          navs.forEach(function (n) {
+            if (n.getAttribute("href") === "#/" + navKey) n.setAttribute("aria-current", "page");
+            else n.removeAttribute("aria-current");
+          });
+          var isDash = r === "dashboard", isWz = r === "books/new";
+          dash.hidden = !isDash;
+          var isMk = r === "marketing", isLk = r === "launch-kit", isCm = r === "campaigns", isRf = r === "referrals";
+          ph.hidden = isDash || isWz || isMk || isLk || isCm || isRf;
+          document.getElementById("x-wizard").hidden = !isWz;
+          document.getElementById("x-mkt").hidden = !isMk;
+          document.getElementById("x-lk").hidden = !isLk;
+          document.getElementById("x-cmp").hidden = !isCm;
+          document.getElementById("x-ref").hidden = !isRf;
+          document.querySelector(".x-main > .x-top").hidden = isMk || isLk || isCm || isRf;
+          if (!isMk) mkClose();
+          document.getElementById("x-phtitle").textContent = titles[r];
+          sub.textContent = isDash ? "Here's how your books are doing." : titles[navKey];
+          menu(false);
+          window.scrollTo(0, 0);
+        }
+        window.addEventListener("hashchange", route);
+        route();
+
+        // checklist
+        var col = document.getElementById("x-collapse"), tasks = document.getElementById("x-tasks");
+        col.addEventListener("click", function () {
+          var open = col.getAttribute("aria-expanded") === "true";
+          col.setAttribute("aria-expanded", open ? "false" : "true");
+          tasks.hidden = open;
+          col.querySelector("span").textContent = open ? "Show steps" : "Hide steps";
+        });
+
+        // copy link
+        [].slice.call(document.querySelectorAll(".x-copy")).forEach(function (copy) {
+          var copyT;
+          copy.addEventListener("click", function () {
+            var url = "https://" + copy.getAttribute("data-url");
+            try { if (navigator.clipboard) navigator.clipboard.writeText(url).catch(function () {}); } catch (err) {}
+            copy.classList.add("is-copied");
+            copy.querySelector("span").textContent = "Copied!";
+            clearTimeout(copyT);
+            copyT = setTimeout(function () { copy.classList.remove("is-copied"); copy.querySelector("span").textContent = "Copy"; }, 1800);
+          });
+        });
+
+        // tooltip toggle (tap)
+        [].slice.call(document.querySelectorAll(".x-tip button")).forEach(function (b) {
+          b.addEventListener("click", function (e) {
+            e.stopPropagation();
+            var open = b.parentNode.classList.toggle("is-open");
+            b.setAttribute("aria-expanded", open ? "true" : "false");
+          });
+        });
+        document.addEventListener("click", function () {
+          [].slice.call(document.querySelectorAll(".x-tip.is-open")).forEach(function (t) { t.classList.remove("is-open"); t.querySelector("button").setAttribute("aria-expanded", "false"); });
+        });
+
+        // strength book switcher
+        var strength = [
+          { pct: 82, dash: "216.4 263.9", head: "Strong, with 3 gaps", text: "9 of 12 sections filled. Fill the last three to give readers every reason to buy." },
+          { pct: 45, dash: "118.8 263.9", head: "Draft, with 7 gaps", text: "5 of 12 sections filled. Fill the rest before you publish." }
+        ];
+        var ring = document.getElementById("x-ring"), sbtns = [].slice.call(document.querySelectorAll("[data-sbook].x-tab"));
+        sbtns.forEach(function (b) {
+          b.addEventListener("click", function () {
+            var i = b.getAttribute("data-sbook"), s = strength[i];
+            sbtns.forEach(function (o) { o.setAttribute("aria-selected", o === b ? "true" : "false"); });
+            [].slice.call(document.querySelectorAll("ul.x-sections")).forEach(function (u) { u.hidden = u.getAttribute("data-sbook") !== i; });
+            ring.setAttribute("aria-label", "Score " + s.pct + " percent");
+            ring.querySelectorAll("circle")[1].setAttribute("stroke-dasharray", s.dash);
+            ring.querySelector("b").textContent = s.pct + "%";
+            ring.nextElementSibling.querySelector("strong").textContent = s.head;
+            ring.nextElementSibling.querySelector("p").textContent = s.text;
+          });
+        });
+
+        // range and book selectors (mockup)
+        document.getElementById("x-range").addEventListener("change", function () { toast("Sample data shows the last 30 days only"); });
+        document.getElementById("x-bookfilter").addEventListener("change", function () { toast("Sample data shows all books; per-book filtering comes next"); });
+
+        // add book wizard
+        var W = document.getElementById("x-wizard");
+        var $ = function (id) { return document.getElementById("w-" + id); };
+        var each = function (sel, fn) { [].forEach.call(W.querySelectorAll(sel), fn); };
+        var CHK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>';
+        var CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+        var BULB = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg>';
+        var DOC = '<span class="x-wz-ficon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5"/></svg></span>';
+        var SAMPLE = {
+          title: "He Was My First Love", sub: "How to Heal from a Broken Heart, Stop the Spiral, and Reclaim Your Peace", author: "The Royal Writer", cat: "Self-help / Relationships",
+          desc: "A step-by-step way out of heartbreak, from the 3 AM spiral to real peace.", price: "2.99", was: "9.99",
+          b1: "Break the 3 AM Spiral", b2: "Rebuild Your Identity", b3: "A Strategy, Not a Cliché", b4: "Reclaim Your Digital Peace",
+          rq: "This didn't just tell me it would be okay. It showed me the way out.", rn: "Jasmine T., Atlanta",
+          l1: "Navigating the Fog", l2: "Stopping the Spiral", l3: "The Reconstruction", l4: "The Harvest",
+          who: "Anyone still carrying a first love, whether it ended last week or years ago, who wants a plan instead of platitudes.",
+          about: "The Royal Writer writes practical guides for healing after heartbreak and reclaiming your peace.",
+          gift: "The First Aid Kit for Your Heart", slug: "he-was-my-first-love"
+        };
+        function f(k, label, o) {
+          o = o || {};
+          var a = ' id="w-' + k + '" data-k="' + k + '"' + (o.ph ? ' placeholder="' + o.ph + '"' : "");
+          var el = o.rows ? '<textarea' + a + ' rows="' + o.rows + '"></textarea>' : '<input type="' + (o.type || "text") + '"' + a + (o.money ? ' min="0" step="0.01" inputmode="decimal"' : "") + " />";
+          if (o.money) el = '<span class="x-wz-money"><i>$</i>' + el + "</span>";
+          return '<label class="x-wz-field' + (o.full ? " x-wz-full" : "") + '" for="w-' + k + '"><span>' + label + (o.help ? " <small>" + o.help + "</small>" : "") + "</span>" + el + "</label>";
+        }
+        function wph(text) { return '<div class="x-cover x-pcover" data-empty hidden role="img" aria-label="No ' + text.toLowerCase() + ' yet">' + text + "</div>"; }
+        function four(p, label) { return [1, 2, 3, 4].map(function (i) { return f(p + i, label + " " + i); }).join(""); }
+        var SECS = [
+          { name: "Key benefits", w: 14, body: four("b", "Benefit") },
+          { name: "Top review", w: 14, body: f("rq", "Review", { rows: 2 }) + f("rn", "Reader name and city") + '<label class="x-wz-check"><input type="checkbox" id="w-perm" />I have permission to publish this review <span class="x-status x-status--warn">Required</span></label>' },
+          { name: "What you'll learn", w: 12, body: four("l", "Part") },
+          { name: "Who it's for", w: 10, body: f("who", "Who it's for", { rows: 2 }) },
+          { name: "Second review", w: 6, body: f("r2", "Review", { rows: 2, ph: "Paste a second reader review" }) },
+          { name: "Look inside", w: 6, body: f("look", "Sample pages or contents", { rows: 3, ph: "Upload sample pages or paste your table of contents" }) + '<div><button class="x-btn x-btn--sm" type="button" data-toast="Choose sample pages to upload (mockup)">Upload sample pages</button></div>' },
+          { name: "About the author", w: 10, body: f("about", "About the author", { rows: 3 }) },
+          { name: "Guarantee", w: 6, body: f("guar", "Your promise", { ph: "e.g. 30-day money-back promise" }) }
+        ];
+        var FONTS = [["Playfair Display", "'Playfair Display', Georgia, serif"], ["Fraunces", "'Fraunces', Georgia, serif"], ["Inter", "'Inter', sans-serif"], ["Geist", "'Geist', sans-serif"], ["Geist Mono", "'Geist Mono', ui-monospace, monospace"]];
+        // templates: f = FONTS index, sw = default swatches (first is the accent), bg/fg/mute/r = page look
+        var TPL = [
+          { id: "classic", name: "Classic", best: "Memoir, self-help, healing", f: 0, bg: "#FBF5EE", fg: "#2A1538", mute: "#6B5A72", r: "6px", sw: [["Crimson", "#B3121F"], ["Blush", "#F6D6D6"], ["Cream", "#FBF5EE"], ["Gold", "#C9A24A"]] },
+          { id: "simple", name: "Simple", best: "First-time authors, short guides", f: 2, bg: "#FFFFFF", fg: "#241A2B", mute: "#6E6873", r: "4px", sw: [["Crimson", "#B3121F"], ["Ink", "#241A2B"], ["Blush", "#F6D6D6"], ["Gold", "#C9A24A"]] },
+          { id: "sleek", name: "Sleek", best: "Coaches, lifestyle books", f: 3, bg: "linear-gradient(135deg, #FDEFF3, #ECE7FA)", fg: "#2B2340", mute: "#645C78", r: "16px", sw: [["Rose", "#D94F6B"], ["Lavender", "#8E7CC3"], ["Blush", "#F6D6D6"], ["Crimson", "#B3121F"]] },
+          { id: "bold", name: "Bold", best: "Business, expert books", f: 2, bg: "#FFFFFF", fg: "#111111", mute: "#4A4A4A", r: "2px", sw: [["Crimson", "#B3121F"], ["Black", "#111111"], ["Gold", "#C9A24A"], ["Blush", "#F6D6D6"]] },
+          { id: "tech", name: "Tech", best: "Tech, finance, business and futurist books", f: 4, bg: "linear-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px) 0 0 / 12px 12px, linear-gradient(90deg, rgb(255 255 255 / 0.05) 1px, transparent 1px) 0 0 / 12px 12px, #0D1117", fg: "#E6EDF3", mute: "#9AA6B2", r: "6px", sw: [["Neon pink", "#FF3D7F"], ["Cyan", "#22D3EE"], ["Lime", "#A3E635"], ["Crimson", "#B3121F"]] },
+          { id: "luxe", name: "Luxe", best: "Premium, leadership, signature editions", f: 1, bg: "#0E0E0E", fg: "#F5EFE2", mute: "#B8AE98", r: "0px", sw: [["Gold", "#C9A24A"], ["Ivory", "#F5EFE2"], ["Crimson", "#B3121F"], ["Black", "#111111"]] }
+        ];
+        function tvars(t) { return "--t-bg:" + t.bg + ";--t-fg:" + t.fg + ";--t-mute:" + t.mute + ";--t-r:" + t.r + ";--t-hf:" + FONTS[t.f][1].replace(/'/g, "") + ";--t-acc:" + t.sw[0][1]; }
+        function swatches(t) {
+          return t.sw.map(function (s, i) { return '<label class="x-wz-swatch" title="' + s[1] + '"><input type="radio" name="w-acc" value="' + s[1] + '"' + (i ? "" : " checked") + ' /><span style="background:' + s[1] + '"></span>' + s[0] + "</label>"; }).join("") +
+            '<label class="x-wz-swatch"><input type="color" id="w-custom" value="#3b1e4f" />Custom</label>';
+        }
+        var EMAILS = [[0, "Your free Heartbreak Journal is here"], [2, "The spiral stops here"], [5, "Your launch price ends soon"]];
+        function toggle(id, title, note, on) { return '<label class="x-wz-toggle" for="w-' + id + '"><span><b>' + title + "</b><small>" + note + '</small></span><input class="x-wz-sw" type="checkbox" role="switch" id="w-' + id + '"' + (on ? " checked" : "") + " /></label>"; }
+        var STEPS = [
+          { name: "Basics", hint: "A clear title and a one-line promise are what readers see first, in search and when your link is shared.",
+            body: '<div class="x-wz-form">' + f("title", "Title") + f("author", "Author") + f("sub", "Subtitle", { full: 1 }) + f("cat", "Category") + f("desc", "One-line description") +
+              '<fieldset class="x-wz-full"><legend>Format</legend><div class="x-wz-chips"><button class="x-wz-chip" type="button" aria-pressed="true">✓ Ebook</button><button class="x-wz-chip" type="button" disabled>Paperback · Coming soon</button></div></fieldset></div>' },
+          { name: "Cover & file", hint: "Readers judge a book by its cover: it is the biggest thing on your sales page.",
+            body: '<div class="x-wz-drop"><span data-img="hwmfl" data-sample></span>' + wph("Cover") +
+              '<div><b>Book cover</b><p class="x-wz-small">Drop an image here. High-resolution, 3D-style covers look best.</p><div class="x-btnrow"><button class="x-btn x-btn--sm" type="button" data-toast="Choose a cover image (mockup)">Upload cover</button></div></div></div>' +
+              '<div class="x-wz-file" data-sample>' + DOC + '<span><b>he-was-my-first-love.epub</b> <span class="x-mute">· 1.2 MB</span></span><button class="x-btn x-btn--sm" type="button" data-toast="Choose a new ebook file (mockup)">Replace</button></div>' +
+              '<div class="x-wz-file" data-empty hidden>' + DOC + '<span class="x-mute">No ebook file yet</span><button class="x-btn x-btn--sm" type="button" data-toast="Choose your ebook file (mockup)">Upload file</button></div>' },
+          { name: "Price", hint: "A launch price next to a crossed-out regular price gives readers a reason to buy today.",
+            body: '<div class="x-wz-form">' + f("price", "Price", { type: "number", money: 1 }) + f("was", '"Was" price', { type: "number", money: 1, help: "Shown crossed out" }) + f("end", "Launch price ends", { type: "date", help: "Optional" }) + "</div>" +
+              '<div class="x-wz-profit" aria-live="polite"><div class="x-wz-row"><span>Reader pays</span><b id="w-pay"></b></div><div class="x-wz-row"><span>Processing <small class="x-mute">2.9% + $0.30</small></span><span id="w-proc"></span></div><div class="x-wz-row"><span>Bookfront fee</span><span class="x-mute">Set at launch</span></div><div class="x-wz-row x-wz-total"><span>You keep</span><b id="w-keep"></b></div></div>' +
+              '<p class="x-wz-small">Example estimate. Final amounts depend on the reader\'s card and the Bookfront fee.</p>' },
+          { name: "Sales page", hint: "Each section answers a question a reader asks before buying.",
+            body: '<div class="x-progress" style="margin-top:0"><div class="x-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Sales page strength" id="w-meter"><span></span></div><b id="w-meterlab"></b></div>' +
+              '<div class="x-wz-secs">' + SECS.map(function (s, i) { return '<details class="x-wz-sec"' + (i ? "" : " open") + '><summary><span class="x-wz-dot" aria-hidden="true"></span>' + s.name + "<small></small>" + CHEV + "</summary><div>" + s.body + "</div></details>"; }).join("") + "</div>" +
+              '<p class="x-wz-small">Empty sections are hidden on your page.</p>' },
+          { name: "Free gift", hint: "A free gift turns visitors who are not ready to buy into readers you can email.",
+            body: '<div class="x-wz-stack">' + toggle("gifton", "Offer a free gift", "Readers get it for their email address", 1) +
+              '<div class="x-wz-stack" id="w-giftbox"><div class="x-wz-gift"><span data-img="journal" data-sample></span>' + wph("Gift") +
+              '<div class="x-wz-stack">' + f("gift", "Gift title") + '<div><button class="x-btn x-btn--sm" type="button" data-toast="Choose your gift file (mockup)">Replace file</button></div></div></div>' +
+              toggle("fu", "Send 3 follow-up emails to readers who haven't bought", "You approve each; they stop when a reader buys", 1) +
+              '<ol class="x-seq" id="w-seq">' + EMAILS.map(function (m) { return '<li><span class="x-day"><span><small>Day</small><b>' + m[0] + '</b></span></span><div class="x-subj">' + m[1] + "</div></li>"; }).join("") + "</ol></div></div>" },
+          { name: "Look & link", hint: "Colours from your cover make the page feel like your book, and a short link is easy to share.",
+            body: '<div class="x-wz-stack"><fieldset><legend>Choose a template <small>Sets matching colours and a heading font</small></legend><div class="x-tp-grid">' +
+              TPL.map(function (t, i) { return '<label class="x-tp"><input type="radio" name="w-tpl" value="' + i + '"' + (i ? "" : " checked") + ' /><span class="x-tp-card"><span class="x-tp-thumb" data-t="' + t.id + '" style="' + tvars(t) + '" aria-hidden="true"><span class="x-tp-cov"></span><span class="x-tp-copy"><span class="x-tp-mono">// ch.01</span><span class="x-tp-h">Your book</span><i></i><i></i><span class="x-tp-btn"></span></span><span class="x-tp-strip"><i></i><i></i><i></i></span></span><b>' + t.name + "</b><small>Best for " + t.best.charAt(0).toLowerCase() + t.best.slice(1) + "</small></span></label>"; }).join("") +
+              '</div><p class="x-wz-small" style="margin:10px 0 0">Every template includes the same sales sections. Your cover colours are applied automatically.</p></fieldset>' +
+              '<fieldset><legend>Accent colour <small>Taken from your cover</small></legend><div class="x-wz-swatches" id="w-sws">' + swatches(TPL[0]) + "</div></fieldset>" +
+              '<label class="x-wz-field" for="w-font"><span>Heading font</span><select id="w-font">' + FONTS.map(function (o) { return '<option value="' + o[1] + '">' + o[0] + "</option>"; }).join("") + "</select></label>" +
+              '<div class="x-wz-field"><label for="w-slug">Your link</label><div class="x-wz-slugrow"><div class="x-wz-slug"><span>bookfront.app/theroyalwriter/</span><input type="text" id="w-slug" data-k="slug" /></div><span id="w-avail" aria-live="polite"></span></div></div></div>' },
+          { name: "Publish", hint: "Check the page the way readers will see it, then go live.",
+            body: '<div class="x-wz-prevhead"><b>Preview</b><div class="x-tabs x-tabs--sm" role="tablist" aria-label="Preview size"><button class="x-tab" type="button" role="tab" aria-selected="true" data-pv="d">Desktop</button><button class="x-tab" type="button" role="tab" aria-selected="false" data-pv="m">Mobile</button></div></div>' +
+              '<div class="x-wz-prev" id="w-prev"><div class="x-wz-prevbar"></div><div class="x-wz-prevbody"><span data-img="prev" data-sample></span>' + wph("Cover") + '<div><p class="x-wz-ptitle" id="w-ptitle"></p><p class="x-wz-small" id="w-pauthor"></p><p class="x-price" id="w-pprice"></p><span class="x-wz-pbtn" id="w-pbtn"></span></div></div></div>' +
+              '<ul class="x-tasks" id="w-sum"></ul><div class="x-wz-pubrow"><button class="x-btn x-btn--gold" type="button" id="w-pub">Publish</button></div>' }
+        ];
+        $("steps").innerHTML = STEPS.map(function (s, i) { return '<li><button type="button" data-go="' + i + '"><b>' + (i + 1) + "</b>" + s.name + "</button></li>"; }).join("");
+        $("panels").innerHTML = STEPS.map(function (s, i) { return '<div class="x-wz-panel" data-panel="' + i + '" hidden><h3 tabindex="-1">' + s.name + '</h3><p class="x-tipline">' + BULB + s.hint + "</p>" + s.body + "</div>"; }).join("");
+        each("#w-panels [data-img]", function (ph) {
+          var img = document.querySelector('#w-imgsrc [data-src-img="' + ph.getAttribute("data-img") + '"]').cloneNode(true);
+          img.removeAttribute("data-src-img");
+          img.setAttribute("data-sample", "");
+          ph.parentNode.replaceChild(img, ph);
+        });
+
+        var wcur = 0, blank = false, okAll = true;
+        function val(k) { return $(k).value.trim(); }
+        function money(n) { return "$" + n.toFixed(2); }
+        function accent() { var r = W.querySelector('[name="w-acc"]:checked'); return r ? r.value : $("custom").value; }
+        function ink(h) { var n = parseInt(h.slice(1), 16); return ((n >> 16) * 0.299 + ((n >> 8) & 255) * 0.587 + (n & 255) * 0.114) / 255 > 0.6 ? "#241a2b" : "#fff"; }
+        function go(i, focus) {
+          wcur = Math.max(0, Math.min(STEPS.length - 1, i));
+          each("[data-panel]", function (p, j) { p.hidden = j !== wcur; });
+          each("#w-steps button", function (b, j) { if (j === wcur) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); b.classList.toggle("is-done", j < wcur); });
+          $("count").innerHTML = "<p>Step " + (wcur + 1) + " of " + STEPS.length + " <span>" + STEPS[wcur].name + '</span></p><div class="x-bar"><span style="width:' + ((wcur + 1) / STEPS.length) * 100 + '%"></span></div>';
+          $("back").disabled = wcur === 0;
+          $("next").hidden = wcur === STEPS.length - 1;
+          if (focus) {
+            W.querySelector('[data-panel="' + wcur + '"] h3').focus({ preventScroll: true });
+            var top = W.getBoundingClientRect().top;
+            if (top < 0) window.scrollTo(0, top + window.scrollY - 76);
+          }
+        }
+        function refresh() {
+          var p = parseFloat($("price").value) || 0, was = parseFloat($("was").value) || 0, proc = p > 0 ? p * 0.029 + 0.3 : 0;
+          $("pay").textContent = money(p);
+          $("proc").textContent = "≈ −" + money(proc);
+          $("keep").textContent = "≈ " + money(Math.max(0, p - proc));
+          var pct = (val("title") ? 8 : 0) + (blank ? 0 : 8) + (p > 0 ? 6 : 0), n = 0;
+          each(".x-wz-sec", function (d, i) {
+            var on = [].some.call(d.querySelectorAll("[data-k]"), function (el) { return el.value.trim(); });
+            d.classList.toggle("is-filled", on);
+            d.querySelector("summary small").textContent = on ? "Filled" : "Empty";
+            if (on) { pct += SECS[i].w; n++; }
+          });
+          $("meter").firstChild.style.width = pct + "%";
+          $("meter").setAttribute("aria-valuenow", pct);
+          $("meterlab").textContent = pct + "% strong · " + n + " of " + SECS.length + " filled";
+          $("giftbox").hidden = !$("gifton").checked;
+          $("seq").hidden = !$("fu").checked;
+          var slug = val("slug");
+          $("avail").className = "x-status x-status--" + (slug ? "live" : "warn");
+          $("avail").textContent = slug ? "Available ✓" : "Add a link";
+          var acc = accent(), pv = $("prev").style;
+          var t = TPL[+W.querySelector('[name="w-tpl"]:checked').value];
+          $("prev").setAttribute("data-t", t.id); $("prev").setAttribute("style", tvars(t));
+          pv.setProperty("--w-acc", acc); pv.setProperty("--w-acc-ink", ink(acc)); pv.setProperty("--w-font", $("font").value);
+          $("ptitle").textContent = val("title") || "Untitled book";
+          $("pauthor").textContent = val("author") ? "by " + val("author") : "";
+          $("pprice").innerHTML = "Ebook " + money(p) + (was > p ? " <s>" + money(was) + "</s>" : "");
+          $("pbtn").textContent = "Buy now · " + money(p);
+          var perm = !val("rq") || $("perm").checked;
+          var items = [
+            [val("title") && val("author"), "Basics", val("title") ? val("title") + " · Ebook" : "Add a title and author", 0],
+            [!blank, "Cover & ebook file", blank ? "Upload your cover and file" : "he-was-my-first-love.epub · 1.2 MB", 1],
+            [p > 0, "Price", p > 0 ? money(p) + (was > p ? ", was " + money(was) : "") : "Set a price", 2],
+            [true, "Sales page", pct + "% strong · empty sections stay hidden", 3],
+            [perm, "Review permission", perm ? "Confirmed" : "Tick the permission box for the top review", 3],
+            [true, "Free gift", $("gifton").checked ? (val("gift") || "On") + ($("fu").checked ? " · 3 follow-up emails" : "") : "Off", 4],
+            [slug, "Link", slug ? "bookfront.app/theroyalwriter/" + slug : "Choose a link", 5]
+          ];
+          okAll = items.every(function (t) { return t[0]; });
+          $("sum").innerHTML = items.map(function (t) {
+            return '<li class="x-task ' + (t[0] ? "is-done" : "is-open") + '"><span class="x-tick" aria-hidden="true">' + (t[0] ? CHK : "") + '</span><span class="x-tasklabel">' + t[1] + "<small></small></span>" + (t[0] ? "" : '<button class="x-btn x-btn--sm" type="button" data-go="' + t[3] + '">Fix</button>') + "</li>";
+          }).join("");
+          each("#w-sum small", function (s, i) { s.textContent = items[i][2]; });
+        }
+        function setBlank(b) {
+          blank = b;
+          var src = b ? {} : SAMPLE;
+          each("[data-k]", function (el) { el.value = src[el.getAttribute("data-k")] || ""; });
+          if (b) $("perm").checked = false;
+          each("[data-sample]", function (el) { el.hidden = b; });
+          each("[data-empty]", function (el) { el.hidden = !b; });
+          $("blank").textContent = b ? "Use sample" : "Start blank";
+          $("prefill").textContent = b ? "Starting from a blank book." : "Prefilled with He Was My First Love.";
+          refresh();
+        }
+        function published(on) {
+          [W.querySelector("nav"), $("count"), $("panels"), $("foot")].forEach(function (el) { el.hidden = on; });
+          $("done").hidden = !on;
+          $("state").className = "x-status x-status--" + (on ? "live" : "draft");
+          $("state").textContent = on ? "Live" : "Unsaved draft";
+        }
+        function dirty() { $("state").textContent = "Unsaved changes"; refresh(); }
+        W.addEventListener("input", function (e) {
+          if (e.target.id === "w-custom") { each('[name="w-acc"]', function (r) { r.checked = false; }); e.target.classList.add("is-on"); }
+          dirty();
+        });
+        W.addEventListener("change", function (e) {
+          var t = e.target;
+          if (t.id === "w-slug") t.value = t.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+          if (t.name === "w-acc") $("custom").classList.remove("is-on");
+          if (t.name === "w-tpl") { var tp = TPL[+t.value]; $("sws").innerHTML = swatches(tp); $("font").value = FONTS[tp.f][1]; }
+          dirty();
+        });
+        W.addEventListener("click", function (e) {
+          var g = e.target.closest("[data-go]"), pv = e.target.closest("[data-pv]");
+          if (g) go(+g.getAttribute("data-go"), true);
+          if (pv) {
+            each("[data-pv]", function (b) { b.setAttribute("aria-selected", b === pv ? "true" : "false"); });
+            $("prev").classList.toggle("is-mobile", pv.getAttribute("data-pv") === "m");
+          }
+        });
+        $("blank").addEventListener("click", function (e) { e.preventDefault(); setBlank(!blank); go(0); toast(blank ? "Fields cleared. Start your new book." : "Sample book restored"); });
+        $("back").addEventListener("click", function () { go(wcur - 1, true); });
+        $("next").addEventListener("click", function () { go(wcur + 1, true); });
+        $("save").addEventListener("click", function () { $("state").textContent = "Draft saved"; toast("Draft saved: " + (val("title") || "Untitled book")); });
+        $("pub").addEventListener("click", function () {
+          refresh();
+          if (!okAll) { toast("Finish the items marked Fix first"); return; }
+          $("url").textContent = "bookfront.app/theroyalwriter/" + val("slug");
+          published(true);
+          $("done").focus();
+          toast("Published");
+        });
+        $("copy").addEventListener("click", function () {
+          var b = this;
+          try { if (navigator.clipboard) navigator.clipboard.writeText("https://" + $("url").textContent).catch(function () {}); } catch (err) {}
+          b.classList.add("x-copy", "is-copied"); b.querySelector("span").textContent = "Copied!";
+          setTimeout(function () { b.classList.remove("is-copied"); b.querySelector("span").textContent = "Copy"; }, 1800);
+        });
+        $("share").addEventListener("click", function () {
+          var url = "https://" + $("url").textContent;
+          if (navigator.share) navigator.share({ title: val("title"), url: url }).catch(function () {});
+          else toast("Share to Facebook, X or email (mockup)");
+        });
+        window.addEventListener("hashchange", function () { if (location.hash === "#/books/new" && !$("done").hidden) { published(false); go(0); } });
+        setBlank(false);
+        go(0);
+
+        // launch kit (sample content for He Was My First Love)
+        (function () {
+          var L = function (id) { return document.getElementById("lk-" + id); };
+          var URL = "bookfront.app/theroyalwriter/he-was-my-first-love";
+          var COPY_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h9"/></svg>';
+          var TABS = ["Launch checklist", "Social posts", "Announcement email", "Share graphics", "Event slide"];
+          var DAYS = [
+            ["-7", "Tease the cover", "Post the cover with “Coming in 7 days.”", 3],
+            ["-3", "Share the free journal", "Point readers to the free Heartbreak Journal so they join your list first."],
+            ["0", "Launch-day announcement plus email", "Post on every channel and send the announcement email.", 2],
+            ["1", "Thank-you and first review ask", "Thank your first buyers and ask for an honest review."],
+            ["3", "Share a reader quote", "Post a line a reader sent you, with the quote card.", 3],
+            ["7", "Last call for the launch price", "$2.99 before it goes back to $9.99. Use the countdown card.", 3],
+            ["14", "Recap", "Share what the first two weeks meant, and thank your readers.", 1]
+          ].map(function (d) { return { day: d[0], t: d[1], hint: d[2], tab: d[3], done: false }; });
+          var IC = {
+            Instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01" stroke-width="2.6" stroke-linecap="round"/></svg>',
+            Facebook: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v2H7v4h3v8h4v-8h3l1-4h-4V8z"/></svg>',
+            X: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.8 3h3.1l-6.8 7.8L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.3-8.3L2 3h6.4l4.4 5.8zm-1.1 16.2h1.7L7.4 4.7H5.6z"/></svg>',
+            LinkedIn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10.5V17M8 7.2v.01M12 17v-6.5M12 13.5a2.5 2.5 0 0 1 5 0V17"/></svg>',
+            "TikTok hook": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5M14 3c.5 2.6 2.4 4.5 5 4.8"/></svg>',
+            "WhatsApp status": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 20l1.3-4A8 8 0 1 1 8 18.7z"/><path d="M9.2 8.6c-.4 3.2 2.8 6.4 6 6l.6-1.6-2-1-.9.8a4 4 0 0 1-1.9-1.9l.8-.9-1-2z"/></svg>'
+          };
+          var POSTS = [
+            ["Instagram", "He was my first love. He was not my last chance.\n\nI wrote this book for every woman still replaying the goodbye, still checking his page, still wondering if she'll feel whole again. You will. 🤍\n\nHe Was My First Love is out now, $2.99 at launch.\n🔗 " + URL + "\n\n#HealingHeartbreak #FirstLove #MovingOn #SelfWorth"],
+            ["Facebook", "Friends, it's here. 📖\n\nFor years I carried a heartbreak I had no words for. This book is those words: the lessons, the prayers and the small daily steps that helped me heal after my first love ended.\n\nIf you or someone you love is hurting, He Was My First Love is for you. It's $2.99 at the launch price.\n\nGet it here: " + URL + "\nShare it with a friend who needs it today. ❤️"],
+            ["X", "Your first heartbreak isn't the end of your story. It's the first page of your healing.\n\nHe Was My First Love is out now, $2.99 at launch.\n" + URL],
+            ["LinkedIn", "Today I published my book, He Was My First Love.\n\nIt began as journal entries in the hardest season of my life and became a guide for women healing from heartbreak: how to grieve honestly, rebuild self-worth and choose peace on purpose.\n\nThank you to everyone who encouraged me to finish it. If it could help someone in your circle, I'd be grateful if you passed it on.\n\n" + URL],
+            ["TikTok hook", "Hook (first 3 seconds): “If you still sleep with your phone face up, waiting for him to text… this is for you.”\n\nThen hold up the cover, share one lesson that helped you let go, and say “link in bio.”\n\nCaption: The book I needed after my first heartbreak. $2.99 at launch 🤍 " + URL + " #healingtok #firstlove #breakup"],
+            ["WhatsApp status", "It's out! 📖 He Was My First Love, for every heart learning to let go. $2.99 at launch → " + URL]
+          ].map(function (p) { return { p: p[0], text: p[1], edit: false }; });
+          var MAIL = [
+            ["subj", "Subject line", "It's here: He Was My First Love"],
+            ["prev", "Preview text", "The book I wrote for every heart that loved first. $2.99 at launch."],
+            ["body", "Message", "Hi {first name},\n\nThe day is here. He Was My First Love is out now.\n\nYou joined my list because something in your heart needed healing. This book is the rest of that journey: honest stories, gentle prayers and the small steps that helped me let go and choose myself again.\n\nFor launch, the ebook is $2.99 (usually $9.99).\n\nGet your copy: " + URL + "\n\nThank you for walking with me.\nThe Royal Writer"]
+          ];
+          var COVER = "<i data-cover></i>";
+          var GFX = [
+            ["Square post", "1080 × 1080", "", 1, COVER + "<span>Out now · $2.99</span><small>He Was My First Love</small>"],
+            ["Story teaser", "1080 × 1920", "x-lk-tile--cream x-lk-tile--story", "9 / 16", "<small>New book</small>" + COVER + "<span>For every heart that loved first.</span>"],
+            ["Quote card", "1080 × 1080", "x-lk-tile--quote", 1, "<span>“Your healing begins with one decision.”</span>" + COVER + "<small>He Was My First Love</small>"],
+            ["Launch-price countdown", "1080 × 1080", "x-lk-tile--cream x-lk-tile--count", 1, COVER + "<small>Launch price ends in</small><span class=\"x-lk-count\"><span>2<small>days</small></span><span>14<small>hrs</small></span><span>36<small>min</small></span></span><span>$2.99 <s>$9.99</s></span>"]
+          ];
+
+          L("tabs").innerHTML = TABS.map(function (t, i) { return '<button class="x-tab" type="button" role="tab" id="lk-t' + i + '" aria-controls="lk-p' + i + '" aria-selected="' + (i === 0) + '">' + t + "</button>"; }).join("");
+          function tab(i) { TABS.forEach(function (_, j) { L("t" + j).setAttribute("aria-selected", i === j ? "true" : "false"); L("p" + j).hidden = i !== j; }); }
+          L("tabs").addEventListener("click", function (e) { var b = e.target.closest("[role=tab]"); if (b) tab(+b.id.slice(4)); });
+
+          function renderDays() {
+            var n = DAYS.filter(function (d) { return d.done; }).length;
+            L("days").innerHTML = DAYS.map(function (d, i) {
+              return '<li class="' + (d.done ? "is-done" : "") + '"><span class="x-day"><span><small>Day</small><b>' + d.day.replace("-", "−") + '</b></span></span><div><div class="x-subj">' + d.t + '</div><div><span class="x-mute">' + d.hint + "</span>" + (d.tab ? ' <button class="x-link" style="border:0;background:none;padding:0" type="button" data-lktab="' + d.tab + '">' + ["", "Social posts", "Email", "Graphics"][d.tab] + " →</button>" : "") + '</div></div><label class="x-wz-check"><input type="checkbox" data-day="' + i + '"' + (d.done ? " checked" : "") + " />Done</label></li>";
+            }).join("");
+            L("bar").setAttribute("aria-valuenow", n);
+            L("bar").firstChild.style.width = (n / DAYS.length) * 100 + "%";
+            L("prog").textContent = n + " of " + DAYS.length + " done";
+          }
+          L("days").addEventListener("change", function (e) { var c = e.target.closest("[data-day]"); if (c) { DAYS[+c.getAttribute("data-day")].done = c.checked; renderDays(); L("days").querySelector('[data-day="' + c.getAttribute("data-day") + '"]').focus(); } });
+          L("days").addEventListener("click", function (e) { var b = e.target.closest("[data-lktab]"); if (b) { tab(+b.getAttribute("data-lktab")); L("t" + b.getAttribute("data-lktab")).focus(); } });
+
+          function renderPosts() {
+            L("posts").innerHTML = POSTS.map(function (p, i) {
+              return '<li class="x-card"><div class="x-mk-who"><span class="x-lk-ico" aria-hidden="true">' + IC[p.p] + "</span><div><b>" + p.p + '</b><small>' + p.text.length + " characters</small></div></div>" +
+                (p.edit ? '<label class="x-mk-lbl" for="lk-ed' + i + '" style="margin:0">Edit ' + p.p + ' caption</label><textarea class="x-mk-in" id="lk-ed' + i + '" rows="9">' + esc(p.text) + "</textarea>" : '<p class="x-lk-quote">' + esc(p.text) + "</p>") +
+                '<div class="x-btnrow" style="margin-top:0"><button class="x-btn x-btn--sm x-btn--plum" type="button" data-pcopy="' + i + '">' + COPY_SVG + "<span>Copy</span></button>" +
+                '<button class="x-btn x-btn--sm" type="button" data-pedit="' + i + '">' + (p.edit ? "Save" : "Edit") + "</button></div></li>";
+            }).join("");
+          }
+          function copied(b, txt, label) {
+            try { if (navigator.clipboard) navigator.clipboard.writeText(txt).catch(function () {}); } catch (err) {}
+            b.classList.add("x-copy", "is-copied"); b.querySelector("span").textContent = "Copied!";
+            setTimeout(function () { b.classList.remove("is-copied"); b.querySelector("span").textContent = label; }, 1800);
+          }
+          L("posts").addEventListener("input", function (e) { if (e.target.id.indexOf("lk-ed") === 0) POSTS[+e.target.id.slice(5)].text = e.target.value; });
+          L("posts").addEventListener("click", function (e) {
+            var c = e.target.closest("[data-pcopy]"), ed = e.target.closest("[data-pedit]");
+            if (c) copied(c, POSTS[+c.getAttribute("data-pcopy")].text, "Copy");
+            if (ed) {
+              var i = +ed.getAttribute("data-pedit"), p = POSTS[i];
+              p.edit = !p.edit; renderPosts();
+              var f = p.edit ? L("ed" + i) : L("posts").querySelector('[data-pedit="' + i + '"]');
+              f.focus();
+              if (!p.edit) toast(p.p + " caption saved");
+            }
+          });
+
+          L("mail").innerHTML = MAIL.map(function (m) {
+            return '<div><label class="x-mk-lbl" for="lk-m' + m[0] + '">' + m[1] + "</label>" + (m[0] === "body" ? '<textarea class="x-mk-in" id="lk-m' + m[0] + '" rows="14" readonly>' + esc(m[2]) + "</textarea>" : '<input class="x-mk-in" id="lk-m' + m[0] + '" type="text" readonly value="' + esc(m[2]) + '" />') + "</div>";
+          }).join("") + '<p class="x-note">{first name} fills in for each reader. Readers who unsubscribed are skipped.</p>';
+          L("medit").addEventListener("click", function () {
+            var on = this.textContent === "Edit";
+            [].forEach.call(L("mail").querySelectorAll(".x-mk-in"), function (f) { f.readOnly = !on; });
+            this.textContent = on ? "Save" : "Edit";
+            if (on) L("msubj").focus(); else toast("Email saved");
+          });
+
+          L("gfx").innerHTML = GFX.map(function (g) {
+            return '<li class="x-card"><div class="x-lk-stage"><div class="x-lk-tile ' + g[2] + '" style="--ar:' + g[3] + '" role="img" aria-label="' + g[0] + ' for He Was My First Love">' + g[4] + '</div></div><div class="x-mk-who"><div><h3>' + g[0] + "</h3><small>" + g[1] + ' px</small></div><button class="x-btn x-btn--sm" style="margin-left:auto" type="button" data-toast="Demo only: ' + g[0].toLowerCase() + ' download">Download</button></div></li>';
+          }).join("");
+          [].forEach.call(L("gfx").querySelectorAll("[data-cover]"), function (p) { var im = L("cover").cloneNode(); im.removeAttribute("id"); im.hidden = false; p.replaceWith(im); });
+
+          L("book").addEventListener("change", function () { this.selectedIndex = 0; toast("Sample data shows He Was My First Love only"); });
+          renderDays(); renderPosts();
+        })();
+
+        // chart
+        var d = Hark.data("x-daily");
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var start = new Date(d.start + "T12:00:00");
+        var labels = d.sales.map(function (_, i) {
+          var t = new Date(start.getTime() + i * 86400000);
+          return months[t.getMonth()] + " " + t.getDate();
+        });
+        var series = {
+          sales: { data: d.sales, total: "47", label: "sales in 30 days", fmt: function (v) { return v + (v === 1 ? " sale" : " sales"); }, tick: function (v) { return v; }, step: 1 },
+          revenue: { data: d.sales.map(function (s) { return Math.round(s * 299) / 100; }), total: "$140.53", label: "revenue in 30 days", fmt: function (v) { return "$" + v.toFixed(2); }, tick: function (v) { return "$" + v; }, step: undefined },
+          signups: { data: d.signups, total: "265", label: "free gift signups in 30 days", fmt: function (v) { return v + " signups"; }, tick: function (v) { return v; }, step: undefined }
+        };
+        var cur = "sales";
+        var chart = new Chart(document.getElementById("x-chart"), {
+          type: "line",
+          data: { labels: labels, datasets: [{ label: "Sales", data: series.sales.data, fill: true, borderColor: "var(--x-plum)", backgroundColor: Hark.wash("var(--x-plum)", 0.18), borderWidth: 2 }] },
+          options: {
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { autoSkip: true, maxTicksLimit: 7, maxRotation: 0 } },
+              y: { beginAtZero: true, ticks: { stepSize: 1, callback: function (v) { return series[cur].tick(v); } } }
+            },
+            plugins: { legend: { display: false }, tooltip: { callbacks: { label: function (ctx) { return series[cur].fmt(ctx.raw); } } } }
+          }
+        });
+        var tabs = [].slice.call(document.querySelectorAll(".x-tab[data-metric]"));
+        tabs.forEach(function (tab) {
+          tab.addEventListener("click", function () {
+            cur = tab.getAttribute("data-metric");
+            tabs.forEach(function (t) { t.setAttribute("aria-selected", t === tab ? "true" : "false"); });
+            var s = series[cur];
+            document.getElementById("x-ctotal").textContent = s.total;
+            document.getElementById("x-clabel").textContent = s.label;
+            document.getElementById("x-chart").setAttribute("aria-label", "Daily " + tab.textContent.toLowerCase() + " over the last 30 days: " + s.total + " in total");
+            if (!chart) return;
+            try {
+              chart.data.datasets[0].data = s.data;
+              chart.data.datasets[0].label = tab.textContent;
+              chart.options.scales.y.ticks.stepSize = s.step;
+              chart.update();
+            } catch (err) { console.error(err); }
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
